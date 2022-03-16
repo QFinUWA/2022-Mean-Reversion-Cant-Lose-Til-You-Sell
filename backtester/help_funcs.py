@@ -1,5 +1,6 @@
 import math
 
+
 def percent_change(d1, d2):
     """Calculate percent change between two numbers.
 
@@ -12,6 +13,7 @@ def percent_change(d1, d2):
     :rtype: float
     """
     return (d2 - d1) / d1
+
 
 def profit(initial_capital, multiplier):
     """Calculate the profit based on multiplier factor.
@@ -26,6 +28,7 @@ def profit(initial_capital, multiplier):
     """
     return initial_capital * (multiplier + 1.0) - initial_capital
 
+
 def rnd(value, prec=8):
     """
     Return good float value
@@ -37,8 +40,10 @@ def rnd(value, prec=8):
     rounded = math.ceil(value * round_prec)
     return rounded / round_prec
 
-class period():
+
+class period:
     """An object representing a period of time."""
+
     def __init__(self, data):
         self.data = data
 
@@ -55,4 +60,4 @@ class period():
             raise ValueError("Error: Cannot look forward!")
         if i <= -(len(self.data)):
             raise ValueError("Error: Cannot look too far back!")
-        return self.data.iloc[i-1]
+        return self.data.iloc[i - 1]

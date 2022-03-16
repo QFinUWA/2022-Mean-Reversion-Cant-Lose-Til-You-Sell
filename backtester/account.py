@@ -1,4 +1,3 @@
-
 from backtester.help_funcs import rnd
 
 FEES = 0.001
@@ -18,7 +17,8 @@ class OpenedTrade:
 
     def __str__(self):
         return "OpenedTrade: {0} {1} {2:.8f} x {3:.8f} Fee: {4:.8f}".format(
-            self.date, self.type_, self.price, self.size, self.fee)
+            self.date, self.type_, self.price, self.size, self.fee
+        )
 
 
 class ClosedTrade(OpenedTrade):
@@ -34,9 +34,9 @@ class ClosedTrade(OpenedTrade):
         self.fee = fee  # deal fee
 
     def __str__(self):
-        return "{0}\n{1}\n{2}\n{3}\n{4}".format(self.type_, self.date,
-                                                self.shares, self.entry,
-                                                self.exit)
+        return "{0}\n{1}\n{2}\n{3}\n{4}".format(
+            self.type_, self.date, self.shares, self.entry, self.exit
+        )
 
 
 class Position:
@@ -73,10 +73,9 @@ class LongPosition(Position):
     Long position class
     """
 
-    def __init__(self, number, entry_price, shares, fee, exit_price=0,
-                 stop_loss=0):
+    def __init__(self, number, entry_price, shares, fee, exit_price=0, stop_loss=0):
         super().__init__(number, entry_price, shares, exit_price, stop_loss)
-        self.type_ = 'long'
+        self.type_ = "long"
         self.fee = fee
 
     def close(self, percent, current_price):
@@ -97,10 +96,9 @@ class ShortPosition(Position):
     Short position class
     """
 
-    def __init__(self, number, entry_price, shares, fee, exit_price=0,
-                 stop_loss=0):
+    def __init__(self, number, entry_price, shares, fee, exit_price=0, stop_loss=0):
         super().__init__(number, entry_price, shares, exit_price, stop_loss)
-        self.type_ = 'short'
+        self.type_ = "short"
         self.fee = fee
 
     def close(self, percent, current_price):
@@ -126,6 +124,7 @@ class Account:
     Main account class
     Store settings and trades data
     """
+
     fee = FEES
 
     def __init__(self, initial_capital, fee=None):
@@ -140,8 +139,9 @@ class Account:
         if isinstance(fee, dict):
             self.fee = fee
 
-    def enter_position(self, type_, entry_capital, entry_price, exit_price=0,
-                       stop_loss=0):
+    def enter_position(
+        self, type_, entry_capital, entry_price, exit_price=0, stop_loss=0
+    ):
         """
         Open position
         :param type_:
@@ -159,7 +159,7 @@ class Account:
             raise ValueError("Error: Not enough buying power to enter position")
         else:
             # apply fee to price
-            price_with_fee = self.apply_fee(entry_price, type_, 'Open')
+            price_with_fee = self.apply_fee(entry_price, type_, "Open")
 
             # round shares and calculate position capital
             size = rnd(entry_capital / price_with_fee)
@@ -170,22 +170,23 @@ class Account:
             # calc buying power
             self.buying_power -= pos_amount + trade_fee
 
-            if type_ == 'long':
+            if type_ == "long":
                 position = LongPosition(
-                    self.number, entry_price, size, trade_fee, exit_price,
-                    stop_loss)
+                    self.number, entry_price, size, trade_fee, exit_price, stop_loss
+                )
 
-            elif type_ == 'short':
+            elif type_ == "short":
                 position = ShortPosition(
-                    self.number, entry_price, size, trade_fee, exit_price,
-                    stop_loss)
+                    self.number, entry_price, size, trade_fee, exit_price, stop_loss
+                )
 
             else:
                 raise TypeError("Invalid position type.")
 
             self.positions.append(position)
             self.opened_trades.append(
-                OpenedTrade(type_, self.date, entry_price, size, trade_fee))
+                OpenedTrade(type_, self.date, entry_price, size, trade_fee)
+            )
             self.number += 1
 
     def close_position(self, position, percent, price):
@@ -203,8 +204,7 @@ class Account:
         # if 0: check and close if position exists
 
         if percent > 1 or percent < 0:
-            raise ValueError(
-                "Error: Percent must range between 0-1.")
+            raise ValueError("Error: Percent must range between 0-1.")
         elif price < 0:
             raise ValueError("Error: Current price cannot be negative.")
         else:
@@ -215,9 +215,15 @@ class Account:
             # print(trade_fee)
 
             self.closed_trades.append(
-                ClosedTrade(position.type_, self.date,
-                            position.shares * percent,
-                            position.entry_price, price, trade_fee))
+                ClosedTrade(
+                    position.type_,
+                    self.date,
+                    position.shares * percent,
+                    position.entry_price,
+                    price,
+                    trade_fee,
+                )
+            )
             self.buying_power += position.close(percent, price) - trade_fee
 
     def apply_fee(self, price, type_, direction):
@@ -237,14 +243,14 @@ class Account:
         :param direction:
         :return:
         """
-        sign = 1 if direction == 'Open' else -1
+        sign = 1 if direction == "Open" else -1
 
         # change price with fee
         fee = self.fee
         # fee = FEES
-        if type_ == 'long':
+        if type_ == "long":
             price *= 1 + sign * fee
-        elif type_ == 'short':
+        elif type_ == "short":
             price *= 1 - sign * fee
 
         # round price
@@ -279,9 +285,12 @@ class Account:
         # for p in self.positions: print(p)  # positions
         # for ot in self.opened_trades: print(ot)  # open trades
         in_pos = sum(
-            [p.shares * current_price for p in self.positions
-             if p.type_ == 'long']) + sum(
-            [p.shares * (p.entry_price - current_price + p.entry_price)
-             for p in self.positions
-             if p.type_ == 'short'])
+            [p.shares * current_price for p in self.positions if p.type_ == "long"]
+        ) + sum(
+            [
+                p.shares * (p.entry_price - current_price + p.entry_price)
+                for p in self.positions
+                if p.type_ == "short"
+            ]
+        )
         return self.buying_power + in_pos
