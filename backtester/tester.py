@@ -1,9 +1,9 @@
-from turtle import back
+# from turtle import back
 import pandas as pd
 from backtester import engine
 import multiprocessing as mp
-import time
-from functools import partial
+# import time
+# from functools import partial
 
 
 # Function used to backtest each stock
