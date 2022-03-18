@@ -32,14 +32,14 @@ timeslicelist = [
 ]
 """
 Calculate_time_slice() function:
-    Context:    Alpha Vantage API stores intraday_extended data as slices for each month, and a month is 30 days from todays date, 
+    Context:    Alpha Vantage API stores intraday_extended data as slices for each month, and a month is 30 days from todays date,
                 for example, year1month1 is the last 30 days, year1month2 is the 30 days before that. The correct slices must be calculated for the users input to return the correct data.
 
     Calculates the timeslices needed for the start and end dates provided.
 
     Input:  start_date: the starting date for the range of dates to be returned
             end_date: the ending date for the range of dates to be returned
-    
+
     Output: timeslicestart: the starting timeslice for the range of dates to be returned
             timesliceend: the ending timeslice for the range of dates to be returned
             start_date: the starting date for the range of dates to be returned (this may be different to the input if the input is not valid)
@@ -117,7 +117,7 @@ time_controller() function:
 
     Input:  start_date: the starting date for the range of dates to be returned
             end_date: the ending date for the range of dates to be returned
-    
+
     Output: startindex: the index of the starting timeslice, used to iterate over the timeslicelist data structure
             endindex: the index of the ending timeslice, used to iterate over the timeslicelist data structure
             start_date: the starting date for the range of dates to be returned (this may be different to the input if the input is not valid)
@@ -203,7 +203,7 @@ def get_intraday_extended(
         df = pd.read_csv(url, parse_dates=[0])
         df.rename({"time": "date"}, inplace=True, axis=1)
 
-        if combine == True:
+        if combine:
             combined_data = pd.concat(
                 [combined_data, df]
             )  # Keep combining all into one dataframe if combine == True
@@ -211,7 +211,7 @@ def get_intraday_extended(
             df.to_csv(
                 "data" + "/" + symbol + "_" + timeslice + "_" + interval + ".csv"
             )  # Save each timeslice as a csv file if combine == False
-    if combine == True:
+    if combine:
         combined_data.reset_index()
         combined_data = combined_data.sort_values(by="date")
         combined_data.reset_index(drop=True, inplace=True)

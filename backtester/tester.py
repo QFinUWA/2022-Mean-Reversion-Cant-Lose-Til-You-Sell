@@ -5,6 +5,7 @@ import multiprocessing as mp
 import time
 from functools import partial
 
+
 # Function used to backtest each stock
 # Parameters: stock - the name of the stock data csv to be tested
 #             logic - the logic function to be used
@@ -21,7 +22,7 @@ def backtest_stock(results, stock, logic, chart):
     data = backtest.results()  # Get the results of the backtest
     data.extend([stock])  # Add the stock name to the results for easy comparison
     results.append(data)  # Add the results to the list of results
-    if chart == True:
+    if chart:
         backtest.chart(title=stock + "_results")  # Chart the results
     lock.release()
     return data  # Return the results
