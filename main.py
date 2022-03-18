@@ -3,7 +3,7 @@ import pandas as pd
 # import multiprocessing as mp
 
 # local imports
-# from backtester import engine, tester
+from backtester import tester  # , engine
 # from backtester import API_Interface as api
 
 training_period = 20  # How far the rolling average takes into calculation
@@ -54,7 +54,7 @@ def logic(
 
 """
 preprocess_data() function:
-    Context: Called once at the beginning of the backtest. TOTALLY OPTIONAL. 
+    Context: Called once at the beginning of the backtest. TOTALLY OPTIONAL.
              Each of these can be calculated at each time interval, however this is likely slower.
 
     Input:  list_of_stocks - a list of stock data csvs to be processed

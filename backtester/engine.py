@@ -181,7 +181,7 @@ class backtest:
                         p.circle(x, y, size=6, color="blue", alpha=0.5)
                     elif trade.type_ == "short":
                         p.circle(x, y, size=6, color="orange", alpha=0.5)
-                except:
+                except Exception:
                     pass
         bokeh.plotting.show(p)
 
