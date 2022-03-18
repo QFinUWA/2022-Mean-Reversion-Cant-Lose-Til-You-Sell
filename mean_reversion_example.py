@@ -20,7 +20,6 @@ logic() function:
 
     Output: none, but the account object will be modified on each call
 """
-# Zac Test
 
 
 def logic(
