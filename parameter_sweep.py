@@ -1,5 +1,5 @@
 import main
-
+import main1
 # Write function to sweep parameters within the logic function
 # pass multiple logic functions? Inefficient
 # pass different parameters along with the same funciton, less repeated code 
@@ -17,11 +17,11 @@ if __name__ == "__main__":
     ]  # List of stock data csv's to be tested, located in "data/" folder
     list_of_stocks_proccessed = preprocess_data(list_of_stocks)  # Preprocess the data
     results = tester.test_array(
-        list_of_stocks_proccessed, logic, chart=True
+        list_of_stocks_proccessed, main.logic(), chart=True
     )  # Run backtest on list of stocks using the logic function
 
-    print("training period " + str(training_period))
-    print("standard deviations " + str(standard_deviations))
+    # print("training period " + str(training_period))
+    # print("standard deviations " + str(standard_deviations))
     df = pd.DataFrame(
         list(results),
         columns=[
