@@ -1,11 +1,9 @@
 import pandas as pd
+import os
 
-# import time
-import multiprocessing as mp
-
+# TODO LIST ALL PROCESSED CSVs
 # local imports
-from backtester import tester, engine
-from backtester import API_Interface as api
+from backtester import tester
 from logic_functions.stochastic import logic
 
 training_period = 20  # How far the rolling average takes into calculation
@@ -26,9 +24,11 @@ preprocess_data() function:
 
 
 def preprocess_data(list_of_stocks):
-    list_of_stocks_processed = []
     for stock in list_of_stocks:
-        df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
+        if os.path.exists(f"data/{stock}_Processed.csv"):
+            continue
+
+        df = pd.read_csv(f"data/{stock}.csv", parse_dates=[0])
         df["TP"] = (df["close"] + df["low"] + df["high"]) / 3  # Calculate Typical Price
         df["std"] = (
             df["TP"].rolling(training_period).std()
@@ -42,9 +42,7 @@ def preprocess_data(list_of_stocks):
         df["BOLD"] = (
             df["MA-TP"] - standard_deviations * df["std"]
         )  # Calculate Lower Bollinger Band
-        df.to_csv("data/" + stock + "_Processed.csv", index=False)  # Save to CSV
-        list_of_stocks_processed.append(stock + "_Processed")
-    return list_of_stocks_processed
+        df.to_csv(f"data/{stock}_Processed.csv", index=False)  # Save to CSV
 
 
 if __name__ == "__main__":
@@ -53,9 +51,13 @@ if __name__ == "__main__":
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
-    list_of_stocks_proccessed = preprocess_data(list_of_stocks)  # Preprocess the data
+
+    preprocess_data(list_of_stocks)  # Preprocess the data
+
+    list_of_stocks_processed = [stock + "_Processed" for stock in list_of_stocks]
+
     results = tester.test_array(
-        list_of_stocks_proccessed, logic, chart=True
+        list_of_stocks_processed, logic, chart=True
     )  # Run backtest on list of stocks using the logic function
 
     print("training period " + str(training_period))
