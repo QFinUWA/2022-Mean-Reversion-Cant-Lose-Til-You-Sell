@@ -1,55 +1,17 @@
 import pandas as pd
+
 # import time
-# import multiprocessing as mp
+import multiprocessing as mp
 
 # local imports
-from backtester import tester  # , engine
-# from backtester import API_Interface as api
+from backtester import tester, engine
+from backtester import API_Interface as api
+from logic_functions.stochastic import logic
 
 training_period = 20  # How far the rolling average takes into calculation
 standard_deviations = (
     3.5  # Number of Standard Deviations from the mean the Bollinger Bands sit
 )
-
-"""
-logic() function:
-    Context: Called for every row in the input data.
-
-    Input:  account - the account object
-            lookback - the lookback dataframe, containing all data up until this point in time
-
-    Output: none, but the account object will be modified on each call
-"""
-
-
-def logic(
-    account, lookback
-):  # Logic function to be used for each time interval in backtest
-
-    today = len(lookback) - 1
-    if (
-        today > training_period
-    ):  # If the lookback is long enough to calculate the Bollinger Bands
-
-        if (
-            lookback["close"][today] < lookback["BOLD"][today]
-        ):  # If current price is below lower Bollinger Band, enter a long position
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "long", account.buying_power, lookback["close"][today]
-                )  # Enter a long position
-
-        if (
-            lookback["close"][today] > lookback["BOLU"][today]
-        ):  # If today's price is above the upper Bollinger Band, enter a short position
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "short", account.buying_power, lookback["close"][today]
-                )  # Enter a short position
 
 
 """
