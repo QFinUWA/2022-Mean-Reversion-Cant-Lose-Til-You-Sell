@@ -66,6 +66,7 @@ preprocess_data() function:
 
 def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None):
     training_period = v1  # How far the rolling average takes into calculation
+    standard_deviations = v2
     list_of_stocks_processed = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     ]  # List of stock data csv's to be tested, located in "data/" folder
     
     # loop over v1 and test for each
-    for training_period in range(2, 52, 2):
+    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2
         list_of_stocks_proccessed = preprocess_data(list_of_stocks, v1=training_period)  # Preprocess the data
         results = tester.test_array(
             list_of_stocks_proccessed, logic, chart=False, v1=training_period        
