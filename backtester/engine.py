@@ -32,7 +32,7 @@ class backtest:
 
         self.data = data
 
-    def start(self, initial_capital, logic, v1=None, v2=None, v3=None, v4=None):
+    def start(self, initial_capital, logic, v1, v2, v3, v4):
         """Start backtest.
 
         :param initial_capital: Starting capital to fund account
@@ -118,12 +118,15 @@ class backtest:
             covers,
             trades,
             round(statistics.stdev(self.account.equity), 3),
-            round(statistics.stdev(
-                [
-                    price * self.account.initial_capital / self.data.iloc[0]["open"]
-                    for price in self.data["open"]
-                ]
-            ), 3),
+            round(
+                statistics.stdev(
+                    [
+                        price * self.account.initial_capital / self.data.iloc[0]["open"]
+                        for price in self.data["open"]
+                    ]
+                ),
+                3,
+            ),
         ]
 
     def chart(self, show_trades=False, title="Equity Curve"):
