@@ -3,8 +3,8 @@ import pandas as pd
 # import multiprocessing as mp
 
 # local imports
-# from backtester import engine, tester
-# from backtester import API_Interface as api
+from backtester import engine, tester
+from backtester import API_Interface as api
 
 training_period = 20  # How far the rolling average takes into calculation
 standard_deviations = (
@@ -23,9 +23,10 @@ logic() function:
 
 
 def logic(
-    account, lookback
+    account, lookback, v1, v2, v3, v4
 ):  # Logic function to be used for each time interval in backtest
 
+    training_period = v1  # How far the rolling average takes into calculation
     today = len(lookback) - 1
     if (
         today > training_period
@@ -63,7 +64,9 @@ preprocess_data() function:
 """
 
 
-def preprocess_data(list_of_stocks):
+def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None):
+    training_period = v1  # How far the rolling average takes into calculation
+    standard_deviations = v2
     list_of_stocks_processed = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
@@ -91,25 +94,37 @@ if __name__ == "__main__":
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
-    list_of_stocks_proccessed = preprocess_data(list_of_stocks)  # Preprocess the data
-    results = tester.test_array(
-        list_of_stocks_proccessed, logic, chart=True
-    )  # Run backtest on list of stocks using the logic function
+    
+    # loop over v1 and test for each
+    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2
+        list_of_stocks_proccessed = preprocess_data(list_of_stocks, v1=training_period)  # Preprocess the data
+        results = tester.test_array(
+            list_of_stocks_proccessed, logic, chart=False, v1=training_period        
+            )
+        print("training period " + str(training_period))
+        print("standard deviations " + str(standard_deviations))
+        df = pd.DataFrame(
+            list(results)
+        )  # Create dataframe of results
+        df.to_csv("results/Test_Results.csv", mode='a', header=False, index=False)  # Save results to csv
+    # results = tester.test_array(
+    #     list_of_stocks_proccessed, logic, chart=True
+    # )  # Run backtest on list of stocks using the logic function
 
-    print("training period " + str(training_period))
-    print("standard deviations " + str(standard_deviations))
-    df = pd.DataFrame(
-        list(results),
-        columns=[
-            "Buy and Hold",
-            "Strategy",
-            "Longs",
-            "Sells",
-            "Shorts",
-            "Covers",
-            "Stdev_Strategy",
-            "Stdev_Hold",
-            "Stock",
-        ],
-    )  # Create dataframe of results
-    df.to_csv("results/Test_Results.csv", index=False)  # Save results to csv
+    # print("training period " + str(training_period))
+    # print("standard deviations " + str(standard_deviations))
+    # df = pd.DataFrame(
+    #     list(results),
+    #     columns=[
+    #         "Buy and Hold",
+    #         "Strategy",
+    #         "Longs",
+    #         "Sells",
+    #         "Shorts",
+    #         "Covers",
+    #         "Stdev_Strategy",
+    #         "Stdev_Hold",
+    #         "Stock",
+    #     ],
+    # )  # Create dataframe of results
+    # df.to_csv("results/Test_Results.csv", index=False)  # Save results to csv
