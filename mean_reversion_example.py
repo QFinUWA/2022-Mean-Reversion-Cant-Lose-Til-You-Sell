@@ -1,9 +1,10 @@
 import pandas as pd
+
 # import time
 # import multiprocessing as mp
 
 # local imports
-from backtester import engine, tester
+from backtester import tester
 from backtester import API_Interface as api
 
 training_period = 20  # How far the rolling average takes into calculation
@@ -94,19 +95,23 @@ if __name__ == "__main__":
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
-    
+
     # loop over v1 and test for each
-    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2
-        list_of_stocks_proccessed = preprocess_data(list_of_stocks, v1=training_period)  # Preprocess the data
+    for training_period in range(
+        2, 52, 2
+    ):  # Test training periods from 2 to 50 in steps of 2
+        list_of_stocks_proccessed = preprocess_data(
+            list_of_stocks, v1=training_period, v2=standard_deviations
+        )  # Preprocess the data
         results = tester.test_array(
-            list_of_stocks_proccessed, logic, chart=False, v1=training_period        
-            )
+            list_of_stocks_proccessed, logic, chart=False, v1=training_period
+        )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
-        df = pd.DataFrame(
-            list(results)
-        )  # Create dataframe of results
-        df.to_csv("results/Test_Results.csv", mode='a', header=False, index=False)  # Save results to csv
+        df = pd.DataFrame(list(results))  # Create dataframe of results
+        df.to_csv(
+            "results/Test_Results.csv", mode="a", header=False, index=False
+        )  # Save results to csv
     # results = tester.test_array(
     #     list_of_stocks_proccessed, logic, chart=True
     # )  # Run backtest on list of stocks using the logic function

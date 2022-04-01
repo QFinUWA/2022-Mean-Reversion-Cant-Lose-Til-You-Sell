@@ -1,5 +1,3 @@
-lookback_period = 3
-
 """
 logic() function:
     Context: Called for every row in the input data.
@@ -12,9 +10,10 @@ logic() function:
 
 
 def logic(
-    account, lookback
+    account, lookback, v1, v2, v3, v4
 ):  # Logic function to be used for each time interval in backtest
 
+    lookback_period = v1
     today = len(lookback) - 1
 
     if today < lookback_period:
