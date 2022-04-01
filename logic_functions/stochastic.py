@@ -1,5 +1,3 @@
-import warnings
-
 lookback_period = 3
 
 """
@@ -27,10 +25,7 @@ def logic(
     n_day_high = max(list(lookback["high"])[today - lookback_period + 1 : today + 1])
     top = today_close - n_day_low
     bottom = n_day_high - n_day_low
-    with warnings.catch_warnings(record=True) as w:
-        stochastic_indicator = (top / bottom) * 100
-        if len(w) > 0:
-            print(n_day_low, today_close, n_day_high)
+    stochastic_indicator = (top / bottom) * 100
 
     if stochastic_indicator >= 80:
         for position in account.positions:  # Close all current positions
