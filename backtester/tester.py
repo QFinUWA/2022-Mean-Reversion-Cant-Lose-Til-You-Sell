@@ -1,14 +1,15 @@
-from turtle import back
+# from turtle import back
 import pandas as pd
 from backtester import engine
 import multiprocessing as mp
-import time
-from functools import partial
+# import time
+# from functools import partial
+
 
 # Function used to backtest each stock
 # Parameters: stock - the name of the stock data csv to be tested
 #             logic - the logic function to be used
-def backtest_stock(results, stock, logic, chart):
+def backtest_stock(results, stock, logic, chart, v1, v2, v3, v4):
     lock = mp.Lock()  # Lock used to prevent errors with multiprocessing
     df = pd.read_csv(
         "data/" + stock + ".csv", parse_dates=[0]
@@ -16,29 +17,29 @@ def backtest_stock(results, stock, logic, chart):
     backtest = engine.backtest(
         df
     )  # Create a backtest object with the data from the csv
-    backtest.start(1000, logic)  # Start the backtest with the provided logic function
+    backtest.start(1000, logic, v1, v2, v3, v4)  # Start the backtest with the provided logic function
     lock.acquire()
     data = backtest.results()  # Get the results of the backtest
-    data.extend([stock])  # Add the stock name to the results for easy comparison
+    data.extend([stock, v1, v2, v3, v4])  # Add the stock name to the results for easy comparison
+    print(data)
+    print(results)
     results.append(data)  # Add the results to the list of results
-    if chart == True:
+    if chart:
         backtest.chart(title=stock + "_results")  # Chart the results
     lock.release()
     return data  # Return the results
-
-
 # Function used to test an array of stocks
 # Parameters: arr - the array of stock data csv's to be tested
 #             logic - the logic function to be used
 
 
-def test_array(arr, logic, chart):
+def test_array(arr, logic, chart, v1=None, v2=None, v3=None, v4=None):
     manager = mp.Manager()  # Create a multiprocessing manager
     results = manager.list()  # Create a list to store the results
     processes = []
     for stock in arr:  # For each stock in the array
         p = mp.Process(
-            target=backtest_stock, args=(results, stock, logic, chart)
+            target=backtest_stock, args=(results, stock, logic, chart, v1, v2, v3, v4)
         )  # Create a process to backtest each stock
         processes.append(p)  # Add the process to the list of processes
         p.start()  # Start the process
