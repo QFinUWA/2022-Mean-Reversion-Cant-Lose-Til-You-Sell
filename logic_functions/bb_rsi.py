@@ -66,19 +66,21 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
     OVERBOUGHT_THRESHOLD = 70
     OVERSOLD_THRESHOLD = 30
-    NA = -9999999
+    # NA = -9999999
 
     training_period = v1
     today = len(lookback) - 1
-    position_type = ""
-    old_bb_lowest_low = NA
-    old_bb_highest_high = NA
-    new_bb_lowest_low = NA
-    new_bb_highest_high = NA
-    old_rsi_lowest_low = NA
-    old_rsi_highest_high = NA
-    new_rsi_lowest_low = NA
-    new_rsi_highest_high = NA
+    # position_type = ""
+
+    # old_bb_low = NA
+    # old_bb_high = NA
+    # new_bb_low = NA
+    # new_bb_high = NA
+
+    # old_rsi_low = NA
+    # old_rsi_high = NA
+    # new_rsi_low = NA
+    # new_rsi_high = NA
 
     if today < training_period:
         return
