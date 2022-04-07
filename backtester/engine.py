@@ -147,12 +147,12 @@ class backtest:
         shares = self.account.initial_capital / self.data.iloc[0]["open"]
         base_equity = [price * shares for price in self.data["open"]]
         p.line(
-            self.data["date"], base_equity, color="#CAD8DE", legend_label="Buy and Hold"
+            self.data["date"], base_equity, color="#FF0000", legend_label="Buy and Hold"
         )
         p.line(
             self.data["date"],
             self.account.equity,
-            color="#49516F",
+            color="#00FF00",
             legend_label="Strategy",
         )
         p.legend.location = "top_left"
