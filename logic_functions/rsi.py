@@ -53,36 +53,38 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
         Output: none, but the account object will be modified on each call"""
 
-    OVERBOUGHT_THRESHOLD: int = 80
-    OVERSOLD_THRESHOLD: int = 20
+    OVERBOUGHT_THRESHOLD = 70
+    OVERSOLD_THRESHOLD = 30
 
     training_period = v1
     today = len(lookback) - 1
-    position = ""
+    position_type = ""
 
     if today < training_period:
         return
 
     # Do nothing if RSI is in between the range
     if (
-        lookback["RSI"][today] > OVERSOLD_THRESHOLD
-        and lookback["RSI"][today] < OVERBOUGHT_THRESHOLD
+        lookback["RSI"][today] >= OVERSOLD_THRESHOLD
+        and lookback["RSI"][today] <= OVERBOUGHT_THRESHOLD
     ):
         return
 
     # Set a long position if stock is oversold
-    elif lookback["RSI"][today] <= OVERSOLD_THRESHOLD:
+    elif lookback["RSI"][today] < OVERSOLD_THRESHOLD:
         for position in account.positions:
             account.close_position(position, 1, lookback["close"][today])
-        position = "long"
+        position_type = "long"
 
     # Set a short position if stock is overbought
     # if lookback["RSI"][today] > OVERBOUGHT_THRESHOLD:
     else:
         for position in account.positions:
             account.close_position(position, 1, lookback["close"][today])
-        position = "short"
+        position_type = "short"
 
     # Enter the position if buying power is more than 0
     if account.buying_power > 0:
-        account.enter_position(position, account.buying_power, lookback["close"][today])
+        account.enter_position(
+            position_type, account.buying_power, lookback["close"][today]
+        )
