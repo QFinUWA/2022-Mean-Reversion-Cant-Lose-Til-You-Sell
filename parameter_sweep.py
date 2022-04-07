@@ -28,14 +28,14 @@ if __name__ == "__main__":
     # for training_period in range(
     #     2, 52, 2
     # ):  # Test training periods from 2 to 50 in steps of 2
-    for training_period in range(14, 15):
+    for training_period in range(6, 7):
         # for standard_deviations in range(1, 10, 1): # Test standard deviations from 1 to 9 in steps of 1. as an example, Will test each standard deviation for each training period 2-52 in steps of 2.
         standard_deviations = 3.5
         list_of_stocks_proccessed = preprocess_data(
             list_of_stocks, v1=training_period, v2=standard_deviations
         )  # Preprocess the data
         results = tester.test_array(
-            list_of_stocks_proccessed, logic, chart=False, v1=training_period
+            list_of_stocks_proccessed, logic, chart=True, v1=training_period
         )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
