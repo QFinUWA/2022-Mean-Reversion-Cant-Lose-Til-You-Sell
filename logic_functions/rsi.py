@@ -4,7 +4,9 @@ import pandas as pd
 from backtester.account import Account
 
 
-def preprocess_data(list_of_stocks: list, v1: int, v2=None, v3=None, v4=None):
+def preprocess_data(
+    list_of_stocks: list[str], v1: int, v2=None, v3=None, v4=None
+) -> list[str]:
     """
     preprocess_data() function:
         Context: Called once at the beginning of the backtest. TOTALLY OPTIONAL.
@@ -15,7 +17,7 @@ def preprocess_data(list_of_stocks: list, v1: int, v2=None, v3=None, v4=None):
         Output: list_of_stocks_processed - a list of processed stock data csvs"""
 
     training_period = v1  # How far the rolling average takes into calculation
-    list_of_stocks_processed = []
+    list_of_stocks_processed: list[str] = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
 
@@ -23,7 +25,7 @@ def preprocess_data(list_of_stocks: list, v1: int, v2=None, v3=None, v4=None):
         df["TP"] = (df["close"] + df["low"] + df["high"]) / 3
         df["TP_CHANGE"] = df["TP"].diff()
 
-        # Calculate gain and loss
+        # Calculate gain and loss in absolute values
         df["TP_CHANGE_GAIN"] = df["TP_CHANGE"].clip(lower=0)
         df["TP_CHANGE_LOSS"] = -df["TP_CHANGE"].clip(upper=0)
 
@@ -41,7 +43,7 @@ def preprocess_data(list_of_stocks: list, v1: int, v2=None, v3=None, v4=None):
     return list_of_stocks_processed
 
 
-def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4):
+def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None:
     """
     logic() function:
         Context: Called for every row in the input data.
@@ -51,11 +53,12 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4):
 
         Output: none, but the account object will be modified on each call"""
 
-    OVERBOUGHT_THRESHOLD: int = 70
-    OVERSOLD_THRESHOLD: int = 30
+    OVERBOUGHT_THRESHOLD: int = 80
+    OVERSOLD_THRESHOLD: int = 20
 
     training_period = v1
     today = len(lookback) - 1
+    position = ""
 
     if today < training_period:
         return
@@ -67,20 +70,19 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4):
     ):
         return
 
-    # Enter a long position if stock is oversold
-    if lookback["RSI"][today] < OVERSOLD_THRESHOLD:
+    # Set a long position if stock is oversold
+    elif lookback["RSI"][today] <= OVERSOLD_THRESHOLD:
         for position in account.positions:
             account.close_position(position, 1, lookback["close"][today])
-        if account.buying_power > 0:
-            account.enter_position(
-                "long", account.buying_power, lookback["close"][today]
-            )
+        position = "long"
 
-    # Enter a short position if stock is overbought
-    if lookback["RSI"][today] > OVERBOUGHT_THRESHOLD:
+    # Set a short position if stock is overbought
+    # if lookback["RSI"][today] > OVERBOUGHT_THRESHOLD:
+    else:
         for position in account.positions:
             account.close_position(position, 1, lookback["close"][today])
-        if account.buying_power > 0:
-            account.enter_position(
-                "short", account.buying_power, lookback["close"][today]
-            )
+        position = "short"
+
+    # Enter the position if buying power is more than 0
+    if account.buying_power > 0:
+        account.enter_position(position, account.buying_power, lookback["close"][today])
