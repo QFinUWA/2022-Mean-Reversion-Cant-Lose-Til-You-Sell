@@ -4,7 +4,8 @@
 #     logic,
 # )  # Swap with importing main when example is defunct
 
-from logic_functions.rsi import preprocess_data, logic
+# from logic_functions.rsi import preprocess_data, logic
+from logic_functions.bb_rsi import preprocess_data, logic
 
 from backtester import tester
 import pandas as pd
