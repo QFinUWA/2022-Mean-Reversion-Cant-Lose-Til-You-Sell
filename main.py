@@ -1,10 +1,12 @@
 import pandas as pd
-import time
-import multiprocessing as mp
+
+# import time
+# import multiprocessing as mp
 
 # local imports
-from backtester import engine, tester
-from backtester import API_Interface as api
+from backtester import tester  # , engine
+
+# from backtester import API_Interface as api
 
 training_period = 20  # How far the rolling average takes into calculation
 standard_deviations = (
@@ -30,7 +32,6 @@ def logic(
     if (
         today > training_period
     ):  # If the lookback is long enough to calculate the Bollinger Bands
-        """
         if (
             lookback["close"][today] < lookback["BOLD"][today]
         ):  # If current price is below lower Bollinger Band, enter a long position
@@ -50,37 +51,11 @@ def logic(
                 account.enter_position(
                     "short", account.buying_power, lookback["close"][today]
                 )  # Enter a short position
-        """
-        IBR = (lookback["close"][today] - lookback["low"][today]) / (
-            lookback["high"][today] - lookback["low"][today]
-        )
-
-        if IBR < 0.05:
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "long", account.buying_power, lookback["close"][today]
-                )  # Enter a long position
-
-        elif (
-            IBR > 0.95
-        ):  # If today's price is above the upper Bollinger Band, enter a short position
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "short", account.buying_power, lookback["close"][today]
-                )  # Enter a short position
-
-        else:
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
 
 
 """
 preprocess_data() function:
-    Context: Called once at the beginning of the backtest. TOTALLY OPTIONAL. 
+    Context: Called once at the beginning of the backtest. TOTALLY OPTIONAL.
              Each of these can be calculated at each time interval, however this is likely slower.
 
     Input:  list_of_stocks - a list of stock data csvs to be processed
