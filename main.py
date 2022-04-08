@@ -48,8 +48,8 @@ def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None):
 if __name__ == "__main__":
     # list_of_stocks = ["TSLA_2020-03-01_2022-01-20_1min"]
     list_of_stocks = [
-        "TSLA_2020-03-09_2022-01-28_15min",
-        "AAPL_2020-03-24_2022-02-12_15min",
+        "TSLA_2020-03-01_2022-01-20_1min",
+        "AAPL_2020-03-24_2022-02-12_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
 
     # loop over v1 and test for each
@@ -59,8 +59,13 @@ if __name__ == "__main__":
         list_of_stocks_proccessed = preprocess_data(
             list_of_stocks, v1=training_period, v2=standard_deviations
         )  # Preprocess the data
+
         results = tester.test_array(
-            list_of_stocks_proccessed, logic, chart=False, v1=training_period
+            list_of_stocks_proccessed,
+            logic,
+            chart=False,
+            v1=training_period,
+            v2=standard_deviations,
         )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
