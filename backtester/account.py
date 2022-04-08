@@ -1,6 +1,7 @@
 from backtester.help_funcs import rnd
 
 FEES = 0.001
+NA = -9999999
 
 
 class OpenedTrade:
@@ -138,6 +139,13 @@ class Account:
         self.closed_trades = []
         if isinstance(fee, dict):
             self.fee = fee
+
+        ############################
+        self.prev_bb_low = NA
+        self.prev_bb_high = NA
+
+        self.prev_rsi_low = NA
+        self.prev_rsi_high = NA
 
     def enter_position(
         self, type_, entry_capital, entry_price, exit_price=0, stop_loss=0
