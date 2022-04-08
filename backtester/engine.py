@@ -32,7 +32,7 @@ class backtest:
 
         self.data = data
 
-    def start(self, initial_capital, logic):
+    def start(self, initial_capital, logic, v1, v2, v3, v4):
         """Start backtest.
 
         :param initial_capital: Starting capital to fund account
@@ -63,7 +63,7 @@ class backtest:
             # Execute trading logic
             lookback = self.data[0 : index + 1]
 
-            logic(self.account, lookback)
+            logic(self.account, lookback, v1, v2, v3, v4)
 
             # Cleanup empty positions
             self.account.purge_positions()
@@ -100,13 +100,14 @@ class backtest:
         sells = len([t for t in self.account.closed_trades if t.type_ == "long"])
         shorts = len([t for t in self.account.opened_trades if t.type_ == "short"])
         covers = len([t for t in self.account.closed_trades if t.type_ == "short"])
+        trades = longs + shorts + sells + covers
 
         print("Longs        : {0}".format(longs))
         print("Sells        : {0}".format(sells))
         print("Shorts       : {0}".format(shorts))
         print("Covers       : {0}".format(covers))
         print("--------------------")
-        print("Total Trades : {0}".format(longs + sells + shorts + covers))
+        print("Total Trades : {0}".format(trades))
         print("\n---------------------------------------")
         return [
             round(pc1 * 100, 2),
@@ -115,12 +116,16 @@ class backtest:
             sells,
             shorts,
             covers,
-            statistics.stdev(self.account.equity),
-            statistics.stdev(
-                [
-                    price * self.account.initial_capital / self.data.iloc[0]["open"]
-                    for price in self.data["open"]
-                ]
+            trades,
+            round(statistics.stdev(self.account.equity), 3),
+            round(
+                statistics.stdev(
+                    [
+                        price * self.account.initial_capital / self.data.iloc[0]["open"]
+                        for price in self.data["open"]
+                    ]
+                ),
+                3,
             ),
         ]
 
