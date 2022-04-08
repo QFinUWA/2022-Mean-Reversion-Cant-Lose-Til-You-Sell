@@ -1,6 +1,6 @@
 from backtester.help_funcs import rnd
 
-FEES = 0.001
+FEES = 0.00
 
 
 class OpenedTrade:
@@ -136,6 +136,9 @@ class Account:
         self.positions = []
         self.opened_trades = []
         self.closed_trades = []
+        self.n_day_k_stochastic = []
+        self.n_day_low = []
+        self.n_day_high = []
         if isinstance(fee, dict):
             self.fee = fee
 
