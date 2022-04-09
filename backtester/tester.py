@@ -2,6 +2,7 @@
 import pandas as pd
 from backtester import engine
 import multiprocessing as mp
+
 # import time
 # from functools import partial
 
@@ -17,7 +18,7 @@ def backtest_stock(results, stock, logic, chart):
     backtest = engine.backtest(
         df
     )  # Create a backtest object with the data from the csv
-    backtest.start(1000, logic)  # Start the backtest with the provided logic function
+    backtest.start(5000, logic)  # Start the backtest with the provided logic function
     lock.acquire()
     data = backtest.results()  # Get the results of the backtest
     data.extend([stock])  # Add the stock name to the results for easy comparison
