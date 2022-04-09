@@ -19,7 +19,7 @@ def backtest_stock(results, stock, logic, chart, v1, v2, v3, v4):
         df
     )  # Create a backtest object with the data from the csv
     backtest.start(
-        1000, logic, v1, v2, v3, v4
+        5000, logic, v1, v2, v3, v4
     )  # Start the backtest with the provided logic function
     lock.acquire()
     data = backtest.results()  # Get the results of the backtest
