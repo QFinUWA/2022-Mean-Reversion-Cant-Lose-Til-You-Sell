@@ -21,15 +21,12 @@ def preprocess_data(
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
 
-        # Calculate typical price and change
-        df["TP"] = (df["close"] + df["low"] + df["high"]) / 3
-
         # Calculate rsi
-        df["RSI_TA"] = pta.rsi(df["TP"], training_period)
+        df["RSI_TA"] = pta.rsi(df["close"], training_period)
 
         # Save to CSV
         df.to_csv("data/" + stock + "_Processed_rsi.csv", index=False)
-        list_of_stocks_processed.append(stock + "_Processed_rsi")
+        list_of_stocks_processed.append(stock + "_Processed_rsi_ta")
     return list_of_stocks_processed
 
 

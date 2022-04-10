@@ -21,20 +21,19 @@ def preprocess_data(
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
 
-        # Calculate typical price and change
-        df["TP"] = (df["close"] + df["low"] + df["high"]) / 3
-        df["TP_CHANGE"] = df["TP"].diff()
+        # Calculate change
+        df["CHANGE"] = df["close"].diff()
 
         # Calculate gain and loss in absolute values
-        df["TP_CHANGE_GAIN"] = df["TP_CHANGE"].clip(lower=0)
-        df["TP_CHANGE_LOSS"] = -df["TP_CHANGE"].clip(upper=0)
+        df["CHANGE_GAIN"] = df["CHANGE"].clip(lower=0)
+        df["CHANGE_LOSS"] = -df["CHANGE"].clip(upper=0)
 
         # Calculate simple moving average of gain and loss
-        df["MA_TP_GAIN"] = df["TP_CHANGE_GAIN"].rolling(training_period).mean()
-        df["MA_TP_LOSS"] = df["TP_CHANGE_LOSS"].rolling(training_period).mean()
+        df["MA_GAIN"] = df["CHANGE_GAIN"].rolling(training_period).mean()
+        df["MA_LOSS"] = df["CHANGE_LOSS"].rolling(training_period).mean()
 
         # Calculate rs and rsi
-        df["RS"] = df["MA_TP_GAIN"] / df["MA_TP_LOSS"]
+        df["RS"] = df["MA_GAIN"] / df["MA_LOSS"]
         df["RSI"] = 100 - (100 / (1 + df["RS"]))
 
         # Save to CSV
