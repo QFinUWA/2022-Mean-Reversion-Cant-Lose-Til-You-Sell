@@ -22,31 +22,31 @@ def preprocess_data(
     list_of_stocks_processed: list[str] = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
-        # Calculate typical price and change
-        df["TP"] = (df["close"] + df["low"] + df["high"]) / 3
-        df["TP_CHANGE"] = df["TP"].diff()
+
+        # Calculate change
+        df["CHANGE"] = df["close"].diff()
 
         # Calculate gain and loss in absolute values
-        df["TP_CHANGE_GAIN"] = df["TP_CHANGE"].clip(lower=0)
-        df["TP_CHANGE_LOSS"] = -df["TP_CHANGE"].clip(upper=0)
+        df["CHANGE_GAIN"] = df["CHANGE"].clip(lower=0)
+        df["CHANGE_LOSS"] = -df["CHANGE"].clip(upper=0)
 
         # Calculate simple moving average of gain and loss
-        df["MA_TP_GAIN"] = df["TP_CHANGE_GAIN"].rolling(training_period).mean()
-        df["MA_TP_LOSS"] = df["TP_CHANGE_LOSS"].rolling(training_period).mean()
+        df["MA_GAIN"] = df["CHANGE_GAIN"].rolling(training_period).mean()
+        df["MA_LOSS"] = df["CHANGE_LOSS"].rolling(training_period).mean()
 
         # Calculate rs and rsi
-        df["RS"] = df["MA_TP_GAIN"] / df["MA_TP_LOSS"]
+        df["RS"] = df["MA_GAIN"] / df["MA_LOSS"]
         df["RSI"] = 100 - (100 / (1 + df["RS"]))
 
         # Calculate the standard deviation
-        df["STD"] = df["TP"].rolling(training_period).std()
+        df["STD"] = df["close"].rolling(training_period).std()
 
-        # Calculate simple moving average of typical price
-        df["MA_TP"] = df["TP"].rolling(training_period).mean()
+        # Calculate simple moving average of closing price
+        df["MA"] = df["close"].rolling(training_period).mean()
 
         # Calculate upper and lower Bollinger Bands
-        df["BB_UP"] = df["MA_TP"] + standard_deviations * df["STD"]
-        df["BB_LO"] = df["MA_TP"] - standard_deviations * df["STD"]
+        df["BB_UP"] = df["MA"] + standard_deviations * df["STD"]
+        df["BB_LO"] = df["MA"] - standard_deviations * df["STD"]
 
         # Save to CSV
         df.to_csv("data/" + stock + "_Processed_bb_rsi.csv", index=False)
@@ -70,30 +70,12 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
     training_period = v1
     today = len(lookback) - 1
-    # position_type = ""
-
-    # old_bb_low = NA
-    # old_bb_high = NA
-    # new_bb_low = NA
-    # new_bb_high = NA
-
-    # old_rsi_low = NA
-    # old_rsi_high = NA
-    # new_rsi_low = NA
-    # new_rsi_high = NA
 
     if today < training_period:
         return
 
-    # Do nothing if RSI is in between the range
+    # Enter a long position if stock is oversold and current price is below lower Bollinger Band
     if (
-        lookback["RSI"][today] >= OVERSOLD_THRESHOLD
-        and lookback["RSI"][today] <= OVERBOUGHT_THRESHOLD
-    ):
-        return
-
-    # Set a long position if stock is oversold and current price is below lower Bollinger Band
-    elif (
         lookback["RSI"][today] < OVERSOLD_THRESHOLD
         and lookback["close"][today] < lookback["BB_LO"][today]
     ):
@@ -104,23 +86,41 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
             account.enter_position(
                 "long", account.buying_power, lookback["close"][today]
             )
+        account.prev_bb_low = lookback["close"][today]
+        account.prev_rsi_low = lookback["close"][today]
 
-    # Set a short position if stock is overbought and current price is above upper Bollinger Band
+    # Enter a short position if stock is overbought and current price is above upper Bollinger Band
     elif (
         lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
         and lookback["close"][today] > lookback["BB_UP"][today]
     ):
-        # else:
         for position in account.positions:
             account.close_position(position, 1, lookback["close"][today])
-        # position_type = "short"
         if account.buying_power > 0:
             account.enter_position(
                 "short", account.buying_power, lookback["close"][today]
             )
+        account.prev_bb_high = lookback["close"][today]
+        account.prev_rsi_high = lookback["close"][today]
 
-    # Enter the position if buying power is more than 0
-    # if account.buying_power > 0:
-    #     account.enter_position(
-    #         position_type, account.buying_power, lookback["close"][today]
-    #     )
+    # elif (
+    #     lookback["RSI"][today] < OVERSOLD_THRESHOLD
+    #     and lookback["close"][today] > lookback["BB_LO"][today]
+    # ):
+    #     for position in account.positions:
+    #         account.close_position(position, 1, lookback["close"][today])
+    #     # position_type = "long"
+    #     if account.buying_power > 0:
+    #         account.enter_position(
+    #             "long", account.buying_power, lookback["close"][today]
+    #         )
+
+    # Regular divergences signal a possible trend reversal.
+    # Bullish: Lower low price, Higher low oscillator, downtrend to uptrend, long
+    # Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
+
+    # Hidden divergences signal a possible trend continuation.
+    # Bullish: Higher low price, Lower low oscillator, Buy the dips, long
+    # Bearish: Lower high price, Higher high oscillator, Sell the rallies, short
+
+    # source: https://www.babypips.com/learn/forex/divergence-cheat-sheet
