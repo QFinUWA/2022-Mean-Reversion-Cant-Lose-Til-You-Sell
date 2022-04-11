@@ -26,6 +26,8 @@ if __name__ == "__main__":
     list_of_stocks = [
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
+        # "TSLA_2020-03-01_2022-01-20_1min",
+        # "AAPL_2020-03-24_2022-02-12_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
 
     # loop over v1 and test for each
