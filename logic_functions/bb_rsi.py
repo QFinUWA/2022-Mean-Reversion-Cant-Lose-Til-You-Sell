@@ -66,7 +66,7 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
     OVERBOUGHT_THRESHOLD = 70
     OVERSOLD_THRESHOLD = 30
-    # NA = -9999999
+    NA = -9999999
 
     training_period = v1
     today = len(lookback) - 1
@@ -74,53 +74,80 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
     if today < training_period:
         return
 
-    # Enter a long position if stock is oversold and current price is below lower Bollinger Band
+    # source: https://www.babypips.com/learn/forex/divergence-cheat-sheet
+    # Regular divergences signal a possible trend reversal.
+    # Hidden divergences signal a possible trend continuation.
     if (
         lookback["RSI"][today] < OVERSOLD_THRESHOLD
-        and lookback["close"][today] < lookback["BB_LO"][today]
+        # and lookback["close"][today] < lookback["BB_LO"][today]
+        and account.prev_bb_low != NA
+        and account.prev_rsi_low != NA
     ):
-        for position in account.positions:
-            account.close_position(position, 1, lookback["close"][today])
-        # position_type = "long"
-        if account.buying_power > 0:
-            account.enter_position(
-                "long", account.buying_power, lookback["close"][today]
-            )
+        # Regular Bullish: Lower low price, Higher low oscillator, downtrend to uptrend, long
+        if (
+            lookback["close"][today] < account.prev_bb_low
+            and lookback["RSI"][today] > account.prev_rsi_low
+        ):
+            close_and_enter("long", account, lookback, today)
+
+        # Hidden Bullish: Higher low price, Lower low oscillator, Buy the dips, long
+        elif (
+            lookback["close"][today] > account.prev_bb_low
+            and lookback["RSI"][today] < account.prev_rsi_low
+        ):
+            close_and_enter("long", account, lookback, today)
+
+    elif (
+        lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
+        # and lookback["close"][today] > lookback["BB_UP"][today]
+        and account.prev_bb_high != NA
+        and account.prev_rsi_high != NA
+    ):
+        # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
+        if (
+            lookback["close"][today] > account.prev_bb_high
+            and lookback["RSI"][today] < account.prev_rsi_high
+        ):
+            close_and_enter("short", account, lookback, today)
+
+        # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short
+        elif (
+            lookback["close"][today] < account.prev_bb_high
+            and lookback["RSI"][today] > account.prev_rsi_high
+        ):
+            close_and_enter("short", account, lookback, today)
+
+    # Record the lows if the low variables are not available
+    elif (
+        lookback["close"][today] < lookback["BB_LO"][today]
+        and lookback["RSI"][today] < OVERSOLD_THRESHOLD
+        and account.prev_bb_low == NA
+        and account.prev_rsi_low == NA
+    ):
         account.prev_bb_low = lookback["close"][today]
         account.prev_rsi_low = lookback["close"][today]
 
-    # Enter a short position if stock is overbought and current price is above upper Bollinger Band
+    # Record the highs if the high variables are not available
     elif (
-        lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
-        and lookback["close"][today] > lookback["BB_UP"][today]
+        lookback["close"][today] > lookback["BB_UP"][today]
+        and lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
+        and account.prev_bb_high == NA
+        and account.prev_rsi_high == NA
     ):
-        for position in account.positions:
-            account.close_position(position, 1, lookback["close"][today])
-        if account.buying_power > 0:
-            account.enter_position(
-                "short", account.buying_power, lookback["close"][today]
-            )
         account.prev_bb_high = lookback["close"][today]
         account.prev_rsi_high = lookback["close"][today]
 
-    # elif (
-    #     lookback["RSI"][today] < OVERSOLD_THRESHOLD
-    #     and lookback["close"][today] > lookback["BB_LO"][today]
-    # ):
-    #     for position in account.positions:
-    #         account.close_position(position, 1, lookback["close"][today])
-    #     # position_type = "long"
-    #     if account.buying_power > 0:
-    #         account.enter_position(
-    #             "long", account.buying_power, lookback["close"][today]
-    #         )
 
-    # Regular divergences signal a possible trend reversal.
-    # Bullish: Lower low price, Higher low oscillator, downtrend to uptrend, long
-    # Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
-
-    # Hidden divergences signal a possible trend continuation.
-    # Bullish: Higher low price, Lower low oscillator, Buy the dips, long
-    # Bearish: Lower high price, Higher high oscillator, Sell the rallies, short
-
-    # source: https://www.babypips.com/learn/forex/divergence-cheat-sheet
+def close_and_enter(
+    pos: str, account: Account, lookback: pd.DataFrame, today: int
+) -> None:
+    for position in account.positions:
+        account.close_position(position, 1, lookback["close"][today])
+    if account.buying_power > 0:
+        account.enter_position(pos, account.buying_power, lookback["close"][today])
+    if pos == "long":
+        account.prev_bb_low = lookback["close"][today]
+        account.prev_rsi_low = lookback["close"][today]
+    else:
+        account.prev_bb_high = lookback["close"][today]
+        account.prev_rsi_high = lookback["close"][today]
