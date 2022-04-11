@@ -25,7 +25,7 @@ def preprocess_data(
         df["RSI_TA"] = pta.rsi(df["close"], training_period)
 
         # Save to CSV
-        df.to_csv("data/" + stock + "_Processed_rsi.csv", index=False)
+        df.to_csv("data/" + stock + "_Processed_rsi_ta.csv", index=False)
         list_of_stocks_processed.append(stock + "_Processed_rsi_ta")
     return list_of_stocks_processed
 

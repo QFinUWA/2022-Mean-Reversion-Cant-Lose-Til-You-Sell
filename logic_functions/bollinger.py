@@ -29,7 +29,7 @@ def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None):
             df["MA"] - standard_deviations * df["std"]
         )  # Calculate Lower Bollinger Band
         df.to_csv("data/" + stock + "_Processed_bb.csv", index=False)  # Save to CSV
-        list_of_stocks_processed.append(stock + "_Processed")
+        list_of_stocks_processed.append(stock + "_Processed_bb")
     return list_of_stocks_processed
 
 
