@@ -72,11 +72,12 @@ class backtest:
 
         # ------------------------------------------------------------
 
-    def results(self):
+    def results(self, stock):
         """Print results"""
         print("-------------- Results ----------------\n")
         being_price = self.data.iloc[0]["open"]
         final_price = self.data.iloc[-1]["close"]
+        print(stock)
 
         pc1 = help_funcs.percent_change(being_price, final_price)
         print("Buy and Hold : {0}%".format(round(pc1 * 100, 2)))
@@ -98,6 +99,9 @@ class backtest:
 
         longs = len([t for t in self.account.opened_trades if t.type_ == "long"])
         sells = len([t for t in self.account.closed_trades if t.type_ == "long"])
+        print([t for t in self.account.opened_trades if t.type_ == "long"])
+        print("---------------------------")
+        print([t for t in self.account.closed_trades if t.type_ == "long"])
         shorts = len([t for t in self.account.opened_trades if t.type_ == "short"])
         covers = len([t for t in self.account.closed_trades if t.type_ == "short"])
         trades = longs + shorts + sells + covers
