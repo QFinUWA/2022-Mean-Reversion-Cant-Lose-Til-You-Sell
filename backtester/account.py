@@ -21,6 +21,11 @@ class OpenedTrade:
             self.date, self.type_, self.price, self.size, self.fee
         )
 
+    # def __repr__(self):
+    #     return f"OpenedTrade: {self.date} {self.type_} {self.price:.8f} x {self.size:.8f} Fee: {self.fee:.8f}"
+    def __repr__(self):
+        return f"{self.date}"
+
 
 class ClosedTrade(OpenedTrade):
     """
@@ -38,6 +43,11 @@ class ClosedTrade(OpenedTrade):
         return "{0}\n{1}\n{2}\n{3}\n{4}".format(
             self.type_, self.date, self.shares, self.entry, self.exit
         )
+
+    # def __repr__(self):
+    #     return f"ClosedTrade: {self.date} {self.type_} {self.shares} {self.entry=} {self.exit=} Fee: {self.fee:.8f}"
+    def __repr__(self):
+        return f"{self.date}"
 
 
 class Position:
