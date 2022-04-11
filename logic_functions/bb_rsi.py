@@ -78,8 +78,10 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
     # Regular divergences signal a possible trend reversal.
     # Hidden divergences signal a possible trend continuation.
     if (
-        lookback["RSI"][today] < OVERSOLD_THRESHOLD
-        # and lookback["close"][today] < lookback["BB_LO"][today]
+        (
+            lookback["RSI"][today] < OVERSOLD_THRESHOLD
+            or lookback["close"][today] < lookback["BB_LO"][today]
+        )
         and account.prev_bb_low != NA
         and account.prev_rsi_low != NA
     ):
@@ -88,39 +90,44 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
             lookback["close"][today] < account.prev_bb_low
             and lookback["RSI"][today] > account.prev_rsi_low
         ):
-            close_and_enter("long", account, lookback, today)
+            close_and_enter("long", account, lookback, today, 0)
 
         # Hidden Bullish: Higher low price, Lower low oscillator, Buy the dips, long
         elif (
             lookback["close"][today] > account.prev_bb_low
             and lookback["RSI"][today] < account.prev_rsi_low
         ):
-            close_and_enter("long", account, lookback, today)
+            close_and_enter("long", account, lookback, today, 0)
 
-    elif (
-        lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
-        # and lookback["close"][today] > lookback["BB_UP"][today]
-        and account.prev_bb_high != NA
-        and account.prev_rsi_high != NA
-    ):
-        # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
-        if (
-            lookback["close"][today] > account.prev_bb_high
-            and lookback["RSI"][today] < account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today)
+    # elif (
+    #     (
+    #         lookback["RSI"][today]
+    #         > OVERBOUGHT_THRESHOLD
+    #         # or lookback["close"][today] > lookback["BB_UP"][today]
+    #     )
+    #     and account.prev_bb_high != NA
+    #     and account.prev_rsi_high != NA
+    # ):
+    #     # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
+    #     if (
+    #         lookback["close"][today] > account.prev_bb_high
+    #         and lookback["RSI"][today] < account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today)
 
-        # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short
-        elif (
-            lookback["close"][today] < account.prev_bb_high
-            and lookback["RSI"][today] > account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today)
+    #     # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short
+    #     elif (
+    #         lookback["close"][today] < account.prev_bb_high
+    #         and lookback["RSI"][today] > account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today)
 
     # Record the lows if the low variables are not available
     elif (
-        lookback["close"][today] < lookback["BB_LO"][today]
-        and lookback["RSI"][today] < OVERSOLD_THRESHOLD
+        (
+            lookback["close"][today] < lookback["BB_LO"][today]
+            or lookback["RSI"][today] < OVERSOLD_THRESHOLD
+        )
         and account.prev_bb_low == NA
         and account.prev_rsi_low == NA
     ):
@@ -129,8 +136,10 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
     # Record the highs if the high variables are not available
     elif (
-        lookback["close"][today] > lookback["BB_UP"][today]
-        and lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
+        (
+            lookback["close"][today] > lookback["BB_UP"][today]
+            or lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
+        )
         and account.prev_bb_high == NA
         and account.prev_rsi_high == NA
     ):
@@ -139,10 +148,16 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
 
 
 def close_and_enter(
-    pos: str, account: Account, lookback: pd.DataFrame, today: int
+    pos: str,
+    account: Account,
+    lookback: pd.DataFrame,
+    today: int,
+    porfolio: float,
+    close: bool = False,
 ) -> None:
-    for position in account.positions:
-        account.close_position(position, 1, lookback["close"][today])
+    if close:
+        for position in account.positions:
+            account.close_position(position, porfolio, lookback["close"][today])
     if account.buying_power > 0:
         account.enter_position(pos, account.buying_power, lookback["close"][today])
     if pos == "long":
