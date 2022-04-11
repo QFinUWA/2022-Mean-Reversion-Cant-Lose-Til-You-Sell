@@ -22,7 +22,7 @@ def backtest_stock(results, stock, logic, chart, v1, v2, v3, v4):
         5000, logic, v1, v2, v3, v4
     )  # Start the backtest with the provided logic function
     lock.acquire()
-    data = backtest.results()  # Get the results of the backtest
+    data = backtest.results(stock)  # Get the results of the backtest
     data.extend(
         [stock, v1, v2, v3, v4]
     )  # Add the stock name to the results for easy comparisonss
