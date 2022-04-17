@@ -17,8 +17,8 @@ def preprocess_data(
 
         Output: list_of_stocks_processed - a list of processed stock data csvs"""
 
-    training_period = v1  # How far the rolling average takes into calculation
-    standard_deviations = v2
+    standard_deviations = v1
+    training_period = v2  # How far the rolling average takes into calculation
     list_of_stocks_processed: list[str] = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
