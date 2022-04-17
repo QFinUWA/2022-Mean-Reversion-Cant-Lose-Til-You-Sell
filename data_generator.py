@@ -37,10 +37,23 @@ get_intraday_extended() function:
 """
 
 
-# api.get_intraday_extended("AAPL", "all", "", "1min", True)
-# api.get_intraday_extended("DIS", "all", "", "15min", True)
-# api.get_intraday_extended("BRK.A", "all", "", "15min", True)
-api.get_intraday_extended("SBUX", "all", "", "15min", True)
+api.get_intraday_extended("AAPL", "all", "", "1min", True)
+api.get_intraday_extended("FB", "all", "", "1min", True)
+api.get_intraday_extended("MSFT", "all", "", "1min", True)
+api.get_intraday_extended("AMZN", "all", "", "1min", True)
+api.get_intraday_extended("GOOG", "all", "", "1min", True)
+api.get_intraday_extended("NVDA", "all", "", "1min", True)
+api.get_intraday_extended("UNH", "all", "", "1min", True)
+api.get_intraday_extended("JNJ", "all", "", "1min", True)
+# api.get_intraday_extended("FB", "all", "", "1min", True)
+api.get_intraday_extended("JPM", "all", "", "1min", True)
+api.get_intraday_extended("DIS", "all", "", "1min", True)
+api.get_intraday_extended("V", "all", "", "1min", True)
+api.get_intraday_extended("KO", "all", "", "1min", True)
+api.get_intraday_extended("PEP", "all", "", "1min", True)
+api.get_intraday_extended("LLY", "all", "", "1min", True)
+# api.get_intraday_extended("SBUX", "all", "", "15min", True)
+
 # api.get_intraday_extended('GOOG', 'all', '', '1min', True)
 # api.get_intraday_extended('IBM', '01-01-2008', '01-03-2022', '1min', True)
 # api.get_intraday_extended('TSLA', 'year1month2', 'year1month1', '60min', True, False)
