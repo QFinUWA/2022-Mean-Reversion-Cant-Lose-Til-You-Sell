@@ -1,4 +1,5 @@
 import pandas as pd
+
 # import time
 # import multiprocessing as mp
 
@@ -27,10 +28,27 @@ def logic(
 ):  # Logic function to be used for each time interval in backtest
 
     training_period = v1  # How far the rolling average takes into calculation
+    stop_loss_percent = v3
     today = len(lookback) - 1
     if (
         today > training_period
     ):  # If the lookback is long enough to calculate the Bollinger Bands
+
+        if (
+            account.long_or_short == "long"
+            and lookback["close"][today] <= account.stoploss
+        ):
+            for position in account.positions:  # Close all current positions
+                account.close_position(position, 1, lookback["close"][today])
+            print("Stoploss hit")
+
+        if (
+            account.long_or_short == "short"
+            and lookback["close"][today] >= account.takeprofit
+        ):
+            for position in account.positions:
+                account.close_position(position, 1, lookback["close"][today])
+            print("Takeprofit hit")
 
         if (
             lookback["close"][today] < lookback["BOLD"][today]
@@ -41,6 +59,10 @@ def logic(
                 account.enter_position(
                     "long", account.buying_power, lookback["close"][today]
                 )  # Enter a long position
+                account.stoploss = lookback["close"][today] * (
+                    1 - stop_loss_percent
+                )  # Set stoploss
+                account.long_or_short
 
         if (
             lookback["close"][today] > lookback["BOLU"][today]
@@ -51,6 +73,9 @@ def logic(
                 account.enter_position(
                     "short", account.buying_power, lookback["close"][today]
                 )  # Enter a short position
+                account.takeprofit = lookback["close"][today] * (
+                    1 + stop_loss_percent
+                )  # Set takeprofit
 
 
 """
@@ -94,19 +119,31 @@ if __name__ == "__main__":
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
-    
+
     # loop over v1 and test for each
-    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2
-        list_of_stocks_proccessed = preprocess_data(list_of_stocks, v1=training_period)  # Preprocess the data
+    for training_period in range(
+        # 2, 52, 2
+        30,
+        32,
+        2,
+    ):  # Test training periods from 2 to 50 in steps of 2
+        list_of_stocks_proccessed = preprocess_data(
+            list_of_stocks, v1=training_period, v2=3.5, v3=0.05
+        )  # Preprocess the data
         results = tester.test_array(
-            list_of_stocks_proccessed, logic, chart=False, v1=training_period        
-            )
+            list_of_stocks_proccessed,
+            logic,
+            chart=False,
+            v1=training_period,
+            v2=3.5,
+            v3=0.10,
+        )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
-        df = pd.DataFrame(
-            list(results)
-        )  # Create dataframe of results
-        df.to_csv("results/Test_Results.csv", mode='a', header=False, index=False)  # Save results to csv
+        df = pd.DataFrame(list(results))  # Create dataframe of results
+        df.to_csv(
+            "results/Test_Results.csv", mode="a", header=False, index=False
+        )  # Save results to csv
     # results = tester.test_array(
     #     list_of_stocks_proccessed, logic, chart=True
     # )  # Run backtest on list of stocks using the logic function

@@ -136,6 +136,9 @@ class Account:
         self.positions = []
         self.opened_trades = []
         self.closed_trades = []
+        self.long_or_short = ""
+        self.stoploss = 0
+        self.takeprofit = 0
         if isinstance(fee, dict):
             self.fee = fee
 
@@ -174,11 +177,13 @@ class Account:
                 position = LongPosition(
                     self.number, entry_price, size, trade_fee, exit_price, stop_loss
                 )
+                self.long_or_short = "long"
 
             elif type_ == "short":
                 position = ShortPosition(
                     self.number, entry_price, size, trade_fee, exit_price, stop_loss
                 )
+                self.long_or_short = "short"
 
             else:
                 raise TypeError("Invalid position type.")
