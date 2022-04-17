@@ -99,9 +99,9 @@ class backtest:
 
         longs = len([t for t in self.account.opened_trades if t.type_ == "long"])
         sells = len([t for t in self.account.closed_trades if t.type_ == "long"])
-        print([t for t in self.account.opened_trades if t.type_ == "long"])
+        # print([t for t in self.account.opened_trades if t.type_ == "long"])
         print("---------------------------")
-        print([t for t in self.account.closed_trades if t.type_ == "long"])
+        # print([t for t in self.account.closed_trades if t.type_ == "long"])
         shorts = len([t for t in self.account.opened_trades if t.type_ == "short"])
         covers = len([t for t in self.account.closed_trades if t.type_ == "short"])
         trades = longs + shorts + sells + covers
