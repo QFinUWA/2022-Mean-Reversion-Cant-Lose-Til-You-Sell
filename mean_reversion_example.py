@@ -23,7 +23,7 @@ logic() function:
 
 
 def logic(
-    account, lookback, v1, v2, v3, v4
+    account, lookback, v1=None, v2=None, v3=None, v4=None
 ):  # Logic function to be used for each time interval in backtest
 
     training_period = v1  # How far the rolling average takes into calculation
