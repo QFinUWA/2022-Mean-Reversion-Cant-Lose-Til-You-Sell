@@ -27,6 +27,7 @@ if __name__ == "__main__":
         "TSLA_2020-03-09_2022-01-28_15min",
         "AAPL_2020-03-24_2022-02-12_15min",
         "DIS_2020-04-27_2022-03-18_15min",
+        "SBUX_2020-04-27_2022-03-18_15min",
         # "TSLA_2020-03-01_2022-01-20_1min",
         # "AAPL_2020-03-24_2022-02-12_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
