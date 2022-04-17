@@ -164,7 +164,7 @@ if __name__ == "__main__":
                     )  # Save results to csv
 
 
-""" 
+"""
     To test:    Bollinger Bands,                                            standard deviation - 10*5 = 50
                 RSI,                                                        Upper + Lower Threshold - 10*3 = 30
                 Stochastic w/ Average,                                      Upper + Lower Threshold, Rolling average - 10*3*4 = 120
@@ -174,8 +174,5 @@ if __name__ == "__main__":
 
                 Bollinger + RSI (longs only) + Stop Losses,                 standard deviation, Upper + Lower Threshold, Stop Losses - 10*5*3*6 = 900 TEST THIS THEN SEE IF STOPLOSSES ARE GOOD, IF SO THEN ADD TO OTHERS
                 Bollinger + RSI + Stochastic w/ Average + Stop Losses,      standard deviation, Upper + Lower Threshold, Rolling average, Stop losses - 10*5*3*4*6 = 3600
-
-
-
 
 """
