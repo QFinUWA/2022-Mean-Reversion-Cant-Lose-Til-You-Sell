@@ -1,6 +1,7 @@
 from backtester.help_funcs import rnd
 
 FEES = 0.001
+NA = -9999999
 
 
 class OpenedTrade:
@@ -20,6 +21,11 @@ class OpenedTrade:
             self.date, self.type_, self.price, self.size, self.fee
         )
 
+    # def __repr__(self):
+    #     return f"OpenedTrade: {self.date} {self.type_} {self.price:.8f} x {self.size:.8f} Fee: {self.fee:.8f}"
+    def __repr__(self):
+        return f"{self.date}"
+
 
 class ClosedTrade(OpenedTrade):
     """
@@ -37,6 +43,11 @@ class ClosedTrade(OpenedTrade):
         return "{0}\n{1}\n{2}\n{3}\n{4}".format(
             self.type_, self.date, self.shares, self.entry, self.exit
         )
+
+    # def __repr__(self):
+    #     return f"ClosedTrade: {self.date} {self.type_} {self.shares} {self.entry=} {self.exit=} Fee: {self.fee:.8f}"
+    def __repr__(self):
+        return f"{self.date}"
 
 
 class Position:
@@ -136,11 +147,21 @@ class Account:
         self.positions = []
         self.opened_trades = []
         self.closed_trades = []
+        self.long_or_short = ""
+        self.stoploss = 0
+        self.takeprofit = 0
         self.n_day_k_stochastic = []
         self.n_day_low = []
         self.n_day_high = []
         if isinstance(fee, dict):
             self.fee = fee
+
+        ############################
+        self.prev_bb_low = NA
+        self.prev_bb_high = NA
+
+        self.prev_rsi_low = NA
+        self.prev_rsi_high = NA
 
     def enter_position(
         self, type_, entry_capital, entry_price, exit_price=0, stop_loss=0
@@ -177,11 +198,13 @@ class Account:
                 position = LongPosition(
                     self.number, entry_price, size, trade_fee, exit_price, stop_loss
                 )
+                self.long_or_short = "long"
 
             elif type_ == "short":
                 position = ShortPosition(
                     self.number, entry_price, size, trade_fee, exit_price, stop_loss
                 )
+                self.long_or_short = "short"
 
             else:
                 raise TypeError("Invalid position type.")

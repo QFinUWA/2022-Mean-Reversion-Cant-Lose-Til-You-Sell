@@ -32,7 +32,7 @@ class backtest:
 
         self.data = data
 
-    def start(self, initial_capital, logic, v1, v2, v3, v4):
+    def start(self, initial_capital, logic, v1, v2, v3, v4, v5):
         """Start backtest.
 
         :param initial_capital: Starting capital to fund account
@@ -63,7 +63,7 @@ class backtest:
             # Execute trading logic
             lookback = self.data[0 : index + 1]
 
-            logic(self.account, lookback, v1, v2, v3, v4)
+            logic(self.account, lookback, v1, v2, v3, v4, v5)
 
             # Cleanup empty positions
             self.account.purge_positions()
@@ -72,11 +72,12 @@ class backtest:
 
         # ------------------------------------------------------------
 
-    def results(self):
+    def results(self, stock):
         """Print results"""
         print("-------------- Results ----------------\n")
         being_price = self.data.iloc[0]["open"]
         final_price = self.data.iloc[-1]["close"]
+        print(stock)
 
         pc1 = help_funcs.percent_change(being_price, final_price)
         print("Buy and Hold : {0}%".format(round(pc1 * 100, 2)))
@@ -98,6 +99,9 @@ class backtest:
 
         longs = len([t for t in self.account.opened_trades if t.type_ == "long"])
         sells = len([t for t in self.account.closed_trades if t.type_ == "long"])
+        # print([t for t in self.account.opened_trades if t.type_ == "long"])
+        print("---------------------------")
+        # print([t for t in self.account.closed_trades if t.type_ == "long"])
         shorts = len([t for t in self.account.opened_trades if t.type_ == "short"])
         covers = len([t for t in self.account.closed_trades if t.type_ == "short"])
         trades = longs + shorts + sells + covers
@@ -147,12 +151,12 @@ class backtest:
         shares = self.account.initial_capital / self.data.iloc[0]["open"]
         base_equity = [price * shares for price in self.data["open"]]
         p.line(
-            self.data["date"], base_equity, color="#CAD8DE", legend_label="Buy and Hold"
+            self.data["date"], base_equity, color="#FF0000", legend_label="Buy and Hold"
         )
         p.line(
             self.data["date"],
             self.account.equity,
-            color="#49516F",
+            color="#00FF00",
             legend_label="Strategy",
         )
         p.legend.location = "top_left"
