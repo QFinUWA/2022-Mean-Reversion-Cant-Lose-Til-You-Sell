@@ -36,7 +36,7 @@ def rnd(value, prec=8):
     :param prec: precession
     :return:
     """
-    round_prec = 10 ** prec
+    round_prec = 10**prec
     rounded = math.ceil(value * round_prec)
     return rounded / round_prec
 

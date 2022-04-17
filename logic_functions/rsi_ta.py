@@ -5,7 +5,7 @@ from backtester.account import Account
 
 
 def preprocess_data(
-    list_of_stocks: list[str], v1: int, v2=None, v3=None, v4=None
+    list_of_stocks: list[str], v1: int, v2=None, v3=None, v4=None, v5=None
 ) -> list[str]:
     """
     preprocess_data() function:
@@ -30,7 +30,7 @@ def preprocess_data(
     return list_of_stocks_processed
 
 
-def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None:
+def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4, v5) -> None:
     """
     logic() function:
         Context: Called for every row in the input data.

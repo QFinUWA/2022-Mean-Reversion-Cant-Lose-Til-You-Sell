@@ -32,7 +32,7 @@ class backtest:
 
         self.data = data
 
-    def start(self, initial_capital, logic, v1, v2, v3, v4):
+    def start(self, initial_capital, logic, v1, v2, v3, v4, v5):
         """Start backtest.
 
         :param initial_capital: Starting capital to fund account
@@ -63,7 +63,7 @@ class backtest:
             # Execute trading logic
             lookback = self.data[0 : index + 1]
 
-            logic(self.account, lookback, v1, v2, v3, v4)
+            logic(self.account, lookback, v1, v2, v3, v4, v5)
 
             # Cleanup empty positions
             self.account.purge_positions()
