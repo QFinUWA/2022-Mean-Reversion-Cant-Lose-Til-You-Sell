@@ -52,6 +52,7 @@ api.get_intraday_extended("V", "all", "", "1min", True)
 api.get_intraday_extended("KO", "all", "", "1min", True)
 api.get_intraday_extended("PEP", "all", "", "1min", True)
 api.get_intraday_extended("LLY", "all", "", "1min", True)
+# api.get_intraday_extended("SBUX", "all", "", "15min", True)
 
 # api.get_intraday_extended('GOOG', 'all', '', '1min', True)
 # api.get_intraday_extended('IBM', '01-01-2008', '01-03-2022', '1min', True)
