@@ -8,7 +8,8 @@
 
 # from logic_functions.rsi_ta import preprocess_data, logic
 
-from logic_functions.bb_rsi import preprocess_data, logic
+# from logic_functions.bb_rsi import preprocess_data, logic
+from logic_functions.bb_rsi_stoch import preprocess_data, logic
 
 from backtester import tester
 import pandas as pd
@@ -39,8 +40,14 @@ if __name__ == "__main__":
     for training_period in range(14, 15):
         # for standard_deviations in range(1, 10, 1): # Test standard deviations from 1 to 9 in steps of 1. as an example, Will test each standard deviation for each training period 2-52 in steps of 2.
         standard_deviations = 2
+        k_period = 14
+        d_preiod = 3
         list_of_stocks_proccessed = preprocess_data(
-            list_of_stocks, v1=training_period, v2=standard_deviations
+            list_of_stocks,
+            v1=standard_deviations,
+            v2=training_period,
+            v3=k_period,
+            v4=d_preiod,
         )  # Preprocess the data
         results = tester.test_array(
             list_of_stocks_proccessed, logic, chart=True, v1=training_period
