@@ -25,9 +25,7 @@ def backtest_stock(results, stock, logic, chart, v1, v2, v3, v4):
     data = backtest.results()  # Get the results of the backtest
     data.extend(
         [stock, v1, v2, v3, v4]
-    )  # Add the stock name to the results for easy comparison
-    print(data)
-    print(results)
+    )  # Add the stock name to the results for easy comparisonss
     results.append(data)  # Add the results to the list of results
     if chart:
         backtest.chart(title=stock + "_results")  # Chart the results

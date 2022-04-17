@@ -139,6 +139,9 @@ class Account:
         self.long_or_short = ""
         self.stoploss = 0
         self.takeprofit = 0
+        self.n_day_k_stochastic = []
+        self.n_day_low = []
+        self.n_day_high = []
         if isinstance(fee, dict):
             self.fee = fee
 
