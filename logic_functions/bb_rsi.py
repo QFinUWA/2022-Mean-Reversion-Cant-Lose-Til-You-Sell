@@ -112,7 +112,7 @@ def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4) -> None
             lookback["close"][today] > account.prev_bb_high
             and lookback["RSI"][today] < account.prev_rsi_high
         ):
-            close_and_enter("short", account, lookback, today, close=True, enter=False)
+            close_and_enter("short", account, lookback, today, close=False, enter=False)
 
         # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short, do not cover
         elif (
