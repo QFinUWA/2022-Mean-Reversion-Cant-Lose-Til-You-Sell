@@ -12,7 +12,7 @@ from numpy import average
 
 
 def logic(
-    account, lookback, v1, v2, v3, v4
+    account, lookback, v1, v2, v3, v4, v5
 ):  # Logic function to be used for each time interval in backtest
 
     lookback_period = v1

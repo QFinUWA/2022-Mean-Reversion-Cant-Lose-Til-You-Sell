@@ -9,6 +9,7 @@ import stochastic
 import rsi
 import bollinger
 import bb_rsi_longs_only
+import bb_rsi_stochastic
 
 from backtester import tester
 import pandas as pd
@@ -40,7 +41,7 @@ if __name__ == "__main__":
         # "V_2020-04-18_2022-03-09_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
     totalruns = 0
-    totalnumofruns = 50 + 30 + 120 + 150
+    totalnumofruns = 50 + 30 + 120 + 150 + 600
     for training_period in range(2, 50, 5):  # 10 loops
         print("Training period: " + str(training_period))
         print(
@@ -122,7 +123,6 @@ if __name__ == "__main__":
                         list_of_stocks, v1=training_period
                     )
                 )  # Preprocess the data
-                # RSI Only
                 results = tester.test_array(
                     list_of_stocks_proccessed,
                     bb_rsi_longs_only.logic(),
@@ -136,6 +136,32 @@ if __name__ == "__main__":
                 df.to_csv(
                     "results/Test_Results.csv", mode="a", header=False, index=False
                 )  # Save results to csv
+
+        for standard_deviation in range(1, 5):  # 5 loops
+            print("Standard deviation: " + str(standard_deviation) + "/5")
+            for offset in range(-10, 11, 10):  # 3 loops
+                print("threshold offset: " + str(offset))
+                for rolling_average in [2, 3, 5, 10]:  # 4 loops
+                    if rolling_average < training_period:
+                        print("rolling average: " + str(rolling_average))
+                        totalruns += 1
+                        list_of_stocks_proccessed = bb_rsi_stochastic.preprocess_data(  # 10 stocks (all 10 at once)
+                            list_of_stocks, v1=training_period
+                        )  # Preprocess the data
+                        results = tester.test_array(
+                            list_of_stocks_proccessed,
+                            bb_rsi_stochastic.logic(),
+                            chart=False,
+                            v1=training_period,
+                            v2=standard_deviation,
+                            v3=80 - offset,  # v2 = [90, 80, 70]
+                            v4=20 + offset,  # v3 = [10, 30, 30]
+                            v5=min(rolling_average, training_period),
+                        )  # Run the backtester
+                    df = pd.DataFrame(list(results))  # Create dataframe of results
+                    df.to_csv(
+                        "results/Test_Results.csv", mode="a", header=False, index=False
+                    )  # Save results to csv
 
 
 """ 

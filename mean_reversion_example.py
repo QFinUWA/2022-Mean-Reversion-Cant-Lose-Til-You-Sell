@@ -24,7 +24,7 @@ logic() function:
 
 
 def logic(
-    account, lookback, v1=None, v2=None, v3=None, v4=None
+    account, lookback, v1=None, v2=None, v3=None, v4=None, v5=None
 ):  # Logic function to be used for each time interval in backtest
 
     training_period = v1  # How far the rolling average takes into calculation
@@ -89,7 +89,7 @@ preprocess_data() function:
 """
 
 
-def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None):
+def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None, v5=None):
     training_period = v1  # How far the rolling average takes into calculation
     standard_deviations = v2
     list_of_stocks_processed = []
