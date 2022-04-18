@@ -9,7 +9,10 @@
 # from logic_functions.rsi_ta import preprocess_data, logic
 
 # from logic_functions.bb_rsi import preprocess_data, logic
-from logic_functions.bb_rsi_stoch import preprocess_data, logic
+# from logic_functions.bb_rsi_longs_only import preprocess_data, logic
+
+# from logic_functions.bb_rsi_stoch import preprocess_data, logic
+from logic_functions.bb_rsi_stoch_longs_only import preprocess_data, logic
 
 from backtester import tester
 import pandas as pd
