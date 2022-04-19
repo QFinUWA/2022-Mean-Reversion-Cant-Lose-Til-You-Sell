@@ -9,10 +9,8 @@
 # from logic_functions.rsi_ta import preprocess_data, logic
 
 # from logic_functions.bb_rsi import preprocess_data, logic
-# from logic_functions.bb_rsi_longs_only import preprocess_data, logic
 
-# from logic_functions.bb_rsi_stoch import preprocess_data, logic
-from logic_functions.bb_rsi_stoch_longs_only import preprocess_data, logic
+from logic_functions.rsi_stochastic import preprocess_data, logic
 
 from backtester import tester
 import pandas as pd
@@ -23,7 +21,9 @@ import pandas as pd
         This also changed the backend backtester code
 
 """
-
+rolling_average = 3  # D% rolling average
+lower_bound = 30  # Lower bound of stochastic indicator
+upper_bound = 70  # upper bound of stochastic indicator
 
 if __name__ == "__main__":
     # list_of_stocks = ["TSLA_2020-03-01_2022-01-20_1min"]
@@ -40,20 +40,26 @@ if __name__ == "__main__":
     # for training_period in range(
     #     2, 52, 2
     # ):  # Test training periods from 2 to 50 in steps of 2
-    for training_period in range(14, 15):
+    for training_period in range(4, 15):
         # for standard_deviations in range(1, 10, 1): # Test standard deviations from 1 to 9 in steps of 1. as an example, Will test each standard deviation for each training period 2-52 in steps of 2.
         standard_deviations = 2
         k_period = 14
         d_preiod = 3
         list_of_stocks_proccessed = preprocess_data(
             list_of_stocks,
-            v1=standard_deviations,
-            v2=training_period,
-            v3=k_period,
-            v4=d_preiod,
+            v1=training_period,
+            v2=rolling_average,
+            v3=lower_bound,
+            v4=upper_bound,
         )  # Preprocess the data
         results = tester.test_array(
-            list_of_stocks_proccessed, logic, chart=True, v1=training_period
+            list_of_stocks_proccessed,
+            logic,
+            chart=True,
+            v1=training_period,
+            v2=rolling_average,
+            v3=lower_bound,
+            v4=upper_bound,
         )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
