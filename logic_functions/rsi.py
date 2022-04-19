@@ -38,7 +38,7 @@ def preprocess_data(
 
         # Save to CSV
         df.to_csv("data/" + stock + "_Processed_rsi.csv", index=False)
-        list_of_stocks_processed.append(stock + "_Processed_rsi")
+        list_of_stocks_processed.append(stock + "_Processed_`rsi")
     return list_of_stocks_processed
 
 
