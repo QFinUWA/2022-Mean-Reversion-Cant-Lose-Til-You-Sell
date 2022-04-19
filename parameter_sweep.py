@@ -43,6 +43,8 @@ if __name__ == "__main__":
     for training_period in range(4, 15):
         # for standard_deviations in range(1, 10, 1): # Test standard deviations from 1 to 9 in steps of 1. as an example, Will test each standard deviation for each training period 2-52 in steps of 2.
         standard_deviations = 2
+        k_period = 14
+        d_preiod = 3
         list_of_stocks_proccessed = preprocess_data(
             list_of_stocks,
             v1=training_period,

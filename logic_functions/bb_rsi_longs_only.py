@@ -17,8 +17,8 @@ def preprocess_data(
 
         Output: list_of_stocks_processed - a list of processed stock data csvs"""
 
-    training_period = v1  # How far the rolling average takes into calculation
-    standard_deviations = v2
+    standard_deviations = v1
+    training_period = v2  # How far the rolling average takes into calculation
     list_of_stocks_processed: list[str] = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
@@ -49,12 +49,20 @@ def preprocess_data(
         df["BB_LO"] = df["MA"] - standard_deviations * df["STD"]
 
         # Save to CSV
-        df.to_csv("data/" + stock + "_Processed_bb_rsi.csv", index=False)
-        list_of_stocks_processed.append(stock + "_Processed_bb_rsi")
+        df.to_csv("data/" + stock + "_Processed_bb_rsi_longs_only.csv", index=False)
+        list_of_stocks_processed.append(stock + "_Processed_bb_rsi_longs_only")
     return list_of_stocks_processed
 
 
-def logic(account: Account, lookback: pd.DataFrame, v1: int, v2, v3, v4, v5) -> None:
+def logic(
+    account: Account,
+    lookback: pd.DataFrame,
+    v1: int,
+    v2=None,
+    v3=None,
+    v4=None,
+    v5=None,
+) -> None:
     """
     logic() function:
         Context: Called for every row in the input data.

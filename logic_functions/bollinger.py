@@ -34,7 +34,7 @@ def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None, v5=None)
 
 
 def logic(
-    account, lookback, v1, v2, v3, v4, v5
+    account, lookback, v1=None, v2=None, v3=None, v4=None, v5=None
 ):  # Logic function to be used for each time interval in backtest
     """
     logic() function:
