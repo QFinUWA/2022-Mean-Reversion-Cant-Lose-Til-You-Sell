@@ -19,20 +19,20 @@ def logic(
     account, lookback, v1, v2, v3, v4, v5
 ):  # Logic function to be used for each time interval in backtest
 
-    lookback_period = v1
+    training_period = v1
     today = len(lookback) - 1
 
-    if today < lookback_period:
+    if today < training_period:
         return
 
     today_close = lookback["close"][today]
 
     # Implement a queue to keep track of last n-day lows and highs.
     account.n_day_low.append(lookback["low"][today])
-    if len(account.n_day_low) > lookback_period:
+    if len(account.n_day_low) > training_period:
         account.n_day_low.pop(0)
     account.n_day_high.append(lookback["high"][today])
-    if len(account.n_day_high) > lookback_period:
+    if len(account.n_day_high) > training_period:
         account.n_day_high.pop(0)
 
     # Implement stochastic indicator calculations
