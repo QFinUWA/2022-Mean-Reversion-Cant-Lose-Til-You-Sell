@@ -23,7 +23,7 @@ logic() function:
 
 
 def logic(
-    account, lookback
+    account, lookback, v1, v2, v3, v4
 ):  # Logic function to be used for each time interval in backtest
 
     today = len(lookback) - 1
@@ -55,7 +55,7 @@ def logic(
             lookback["high"][today] - lookback["low"][today]
         )
 
-        if IBR < 0.05:
+        if IBR < v1:
             for position in account.positions:  # Close all current positions
                 account.close_position(position, 1, lookback["close"][today])
             if account.buying_power > 0:
@@ -64,7 +64,7 @@ def logic(
                 )  # Enter a long position
 
         elif (
-            IBR > 0.95
+            IBR > 1 - v1
         ):  # If today's price is above the upper Bollinger Band, enter a short position
             for position in account.positions:  # Close all current positions
                 account.close_position(position, 1, lookback["close"][today])

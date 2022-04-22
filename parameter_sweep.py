@@ -1,7 +1,7 @@
 # import main
-import mean_reversion_example #Swap with importing main when example is defunct
+import ibr #Swap with importing main when example is defunct
 from backtester import tester
-import pandas as pd
+import pandas as pd 
 
 """
     Modifications to make to the code:
@@ -19,12 +19,12 @@ if __name__ == "__main__":
     ]  # List of stock data csv's to be tested, located in "data/" folder
     
     # loop over v1 and test for each
-    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2
+    for training_period in range(2, 52, 2): # Test training periods from 2 to 50 in steps of 2 #CHANGE THIS ########
         # for standard_deviations in range(1, 10, 1): # Test standard deviations from 1 to 9 in steps of 1. as an example, Will test each standard deviation for each training period 2-52 in steps of 2.
         standard_deviations = 3.5
-        list_of_stocks_proccessed = mean_reversion_example.preprocess_data(list_of_stocks, v1=training_period, v2=standard_deviations)  # Preprocess the data
+        list_of_stocks_proccessed = ibr.preprocess_data(list_of_stocks, v1=training_period, v2=standard_deviations)  # Preprocess the data
         results = tester.test_array(
-            list_of_stocks_proccessed, mean_reversion_example.logic, chart=False, v1=training_period        
+            list_of_stocks_proccessed, ibr.logic, chart=False, v1=training_period        
             )
         print("training period " + str(training_period))
         print("standard deviations " + str(standard_deviations))
