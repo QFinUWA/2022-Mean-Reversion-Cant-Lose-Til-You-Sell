@@ -10,8 +10,9 @@
 
 # from logic_functions.bb_rsi import preprocess_data, logic
 
-from logic_functions.rsi_stochastic import preprocess_data, logic
+# from logic_functions.rsi_stochastic import preprocess_data, logic
 
+from logic_functions.bb_rsi_stoch import logic
 from backtester import tester
 import pandas as pd
 
