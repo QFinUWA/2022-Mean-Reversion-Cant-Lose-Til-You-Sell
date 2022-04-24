@@ -39,8 +39,8 @@ def preprocess_data(
         # Calculate IBS
         df["IBS"] = (df["close"] - df["low"]) / (df["high"] - df["low"])
         # Save to CSV
-        df.to_csv("data/" + stock + "_Processed_rsi.csv", index=False)
-        list_of_stocks_processed.append(stock + "_Processed_rsi")
+        df.to_csv("data/" + stock + "_Processed_rsi_ibs.csv", index=False)
+        list_of_stocks_processed.append(stock + "_Processed_rsi_ibs")
     return list_of_stocks_processed
 
 
@@ -63,8 +63,8 @@ def logic(
         Output: none, but the account object will be modified on each call"""
 
     # RSI
-    OVERBOUGHT_THRESHOLD = 90
-    OVERSOLD_THRESHOLD = 10
+    OVERBOUGHT_THRESHOLD = 70
+    OVERSOLD_THRESHOLD = 30
     MAINTAIN_THRESHOLD_STAY = 40
 
     training_period = v1
@@ -103,7 +103,7 @@ def logic(
         and lookback["IBS"][today] <= IBS_PERCENTILE
     ):
         position_type = "long"
-    
+
     # Set a short position if stock is overbought
     elif (
         lookback["RSI"][today] > OVERBOUGHT_THRESHOLD

@@ -25,8 +25,8 @@ def preprocess_data(
         df["IBS"] = (df["close"] - df["low"]) / (df["high"] - df["low"])
 
         # Save to CSV
-        df.to_csv("data/" + stock + "_Processed_rsi.csv", index=False)
-        list_of_stocks_processed.append(stock + "_Processed_rsi")
+        df.to_csv("data/" + stock + "_Processed_ibs.csv", index=False)
+        list_of_stocks_processed.append(stock + "_Processed_ibs")
     return list_of_stocks_processed
 
 
@@ -52,13 +52,41 @@ def logic(
     today = len(lookback) - 1
     position_type = ""
 
-    IBS_PERCENTILE = v2
-
+    IBS_PERCENTILE = 0.05
+    IBS_MAINTAIN_PERCENTILE = 0.2
     if today < training_period:
         return
 
-    # IMPLMENENT LOGIC
+    # check if long/short positions are above maintain threshold, to see if still "overbought above average"
+    for position in account.positions:
+        if (
+            position.type_ == "long"
+            and lookback["IBS"][today] > IBS_MAINTAIN_PERCENTILE
+        ):
+            account.close_position(position, 1, lookback["close"][today])
 
+        elif (
+            position.type_ == "short"
+            and lookback["IBS"][today] < 1 - IBS_MAINTAIN_PERCENTILE
+        ):
+            account.close_position(position, 1, lookback["close"][today])
+
+    if (
+        lookback["IBS"][today] >= IBS_PERCENTILE
+        and lookback["IBS"][today] <= 1 - IBS_PERCENTILE
+    ):
+        return
+
+    # Set a long position if stock is oversold
+    elif lookback["IBS"][today] < IBS_PERCENTILE:
+        position_type = "long"
+
+    # Set a short position if stock is overbought
+    # if lookback["IBS"][today] > 1 -IBS_PERCENTILE:
+    else:
+        position_type = "short"
+
+    # Enter the position if buying power is more than 0
     if account.buying_power > 0:
         account.enter_position(
             position_type, account.buying_power, lookback["close"][today]

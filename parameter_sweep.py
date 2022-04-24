@@ -9,6 +9,11 @@
 # from logic_functions.rsi_ta import preprocess_data, logic
 
 # from logic_functions.bb_rsi import preprocess_data, logic
+<<<<<<< Updated upstream
+=======
+# from logic_functions.bb_rsi_stoch_nick import preprocess_data, logic
+from logic_functions.ibs import preprocess_data, logic
+>>>>>>> Stashed changes
 
 from logic_functions.rsi_ibs import preprocess_data, logic
 
@@ -26,10 +31,26 @@ lower_bound = 30  # Lower bound of stochastic indicator
 upper_bound = 70  # upper bound of stochastic indicator
 
 if __name__ == "__main__":
-    # list_of_stocks = ["TSLA_2020-03-01_2022-01-20_1min"]
     list_of_stocks = [
+<<<<<<< Updated upstream
         "TSLA_2020-03-01_2022-01-20_1min",
         "AAPL_2020-03-24_2022-02-12_1min",
+=======
+        # "AAPL_2020-04-18_2022-03-09_1min",
+        # "AMZN_2020-04-18_2022-03-09_1min",
+        "GOOG_2020-04-18_2022-03-09_1min",
+        # "MSFT_2020-04-18_2022-03-09_1min",
+        # "FB_2020-04-18_2022-03-09_1min",
+        # "JNJ_2020-04-18_2022-03-09_1min",
+        "JPM_2020-04-18_2022-03-09_1min",
+        "KO_2020-04-18_2022-03-09_1min",
+        # "LLY_2020-04-18_2022-03-09_1min",
+        # "NVDA_2020-04-18_2022-03-09_1min",
+        # "PEP_2020-04-18_2022-03-09_1min",
+        "TSLA_2020-03-01_2022-01-20_1min",
+        # "UNH_2020-04-18_2022-03-09_1min",
+        # "V_2020-04-18_2022-03-09_1min",
+>>>>>>> Stashed changes
     ]  # List of stock data csv's to be tested, located in "data/" folder
 
     # loop over v1 and test for each
