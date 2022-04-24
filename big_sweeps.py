@@ -16,7 +16,8 @@ import logic_functions.bb_rsi_longs_only as bb_rsi_longs_only
 
 import logic_functions.bb_rsi_stoch as bb_rsi_stoch
 
-# import logic_functions.rsi_stochastic
+import logic_functions.rsi_stochastic as rsi_stochastic
+
 # import logic_functions.bb_rsi_stop_loss
 
 from backtester import tester
@@ -371,141 +372,141 @@ if __name__ == "__main__":
                                 header=False,
                                 index=False,
                             )  # Save results to csv
-    for training_period in range(2, 50, 5):  # 10 loops
-        print("time taken: ", time.time() - starttime)
-        print("Training period: " + str(training_period))
-        print(
-            "Training period loop number: "
-            + str(((training_period - 2) / 5) + 1)
-            + "/10"
-        )
-        for offset in range(-10, 11, 10):  # 3 loops
-            print("time taken: ", time.time() - starttime)
-            print("threshold offset: " + str(offset))
-            print("total runs: " + str(totalruns) + "/" + str(totalnumofruns))
-            for rolling_average in [2, 3, 5, 10]:  # 4 loops
-                print("time taken: ", time.time() - starttime)
-                if rolling_average < training_period:
-                    print("rolling average: " + str(rolling_average))
-                    totalruns += 1
-                    list_of_stocks_proccessed = (
-                        rsi_stochastic.preprocess_data(  # 10 stocks (all 10 at once)
-                            list_of_stocks, v1=training_period
-                        )
-                    )  # Preprocess the data
-                    results = tester.test_array(
-                        list_of_stocks_proccessed,
-                        rsi_stochastic.logic,
-                        chart=False,
-                        v1=training_period,
-                        v2=80 - offset,  # v2 = [90, 80, 70]
-                        v3=20 + offset,  # v3 = [10, 30, 30]
-                        v4=min(rolling_average, training_period),
-                    )  # Run the backtester
-                df = pd.DataFrame(list(results))  # Create dataframe of results
-                df.columns = [
-                    "Buy and Hold",
-                    "Strategy",
-                    "Longs",
-                    "Sells",
-                    "Shorts",
-                    "Covers",
-                    "Trades",
-                    "Stdev_Strategy",
-                    "Stdev_Hold",
-                    "Stock",
-                    "v1",
-                    "v2",
-                    "v3",
-                    "v4",
-                    "v5",
-                ]
-                if training_period == 2 and offset == -10 and rolling_average == 2:
-                    df.to_csv(
-                        "results/Test_Results_RSI_Stochastic.csv",
-                        mode="a",
-                        header=True,
-                        index=False,
-                    )
-                else:
-                    df.to_csv(
-                        "results/Test_Results_RSI_Stochastic.csv",
-                        mode="a",
-                        header=True,
-                        index=False,
-                    )  # Save results to csv
-    for training_period in range(2, 50, 5):  # 10 loops
-        print("time taken: ", time.time() - starttime)
-        print("Training period: " + str(training_period))
-        print(
-            "Training period loop number: "
-            + str(((training_period - 2) / 5) + 1)
-            + "/10"
-        )
-        for standard_deviation in range(1, 3):  # 5 loops
-            print("time taken: ", time.time() - starttime)
-            print("Standard deviation: " + str(standard_deviation) + "/3")
-            for offset in range(-10, 11, 10):  # 3 loops
-                print("time taken: ", time.time() - starttime)
-                print("threshold offset: " + str(offset))
-                for stop_loss in [0.05, 0.10, 0.15, 0.20]:  # 4 loops
-                    print("time taken: ", time.time() - starttime)
-                    if rolling_average < training_period:
-                        print("rolling average: " + str(rolling_average))
-                        print(
-                            "total runs: " + str(totalruns) + "/" + str(totalnumofruns)
-                        )
-                        totalruns += 1
-                        list_of_stocks_proccessed = bb_rsi_stop_loss.preprocess_data(  # 10 stocks (all 10 at once)
-                            list_of_stocks, v1=training_period
-                        )  # Preprocess the data
-                        results = tester.test_array(
-                            list_of_stocks_proccessed,
-                            bb_rsi_stop_loss.logic,
-                            chart=False,
-                            v1=training_period,
-                            v2=standard_deviation,
-                            v3=80 - offset,  # v2 = [90, 80, 70]
-                            v4=20 + offset,  # v3 = [10, 30, 30]
-                            v5=min(rolling_average, training_period),
-                        )  # Run the backtester
-                    df = pd.DataFrame(list(results))  # Create dataframe of results
-                    df.columns = [
-                        "Buy and Hold",
-                        "Strategy",
-                        "Longs",
-                        "Sells",
-                        "Shorts",
-                        "Covers",
-                        "Trades",
-                        "Stdev_Strategy",
-                        "Stdev_Hold",
-                        "Stock",
-                        "v1",
-                        "v2",
-                        "v3",
-                        "v4",
-                        "v5",
-                    ]
-                    if (
-                        training_period == 2
-                        and offset == -10
-                        and standard_deviation == 1
-                        and stop_loss == 0.05
-                    ):
-                        df.to_csv(
-                            "results/Test_Results_BB_RSI_Stop_Loss.csv",
-                            mode="a",
-                            header=True,
-                            index=False,
-                        )
-                    else:
-                        df.to_csv(
-                            "results/Test_Results_BB_RSI_stop_loss.csv",
-                            mode="a",
-                            header=True,
-                            index=False,
-                        )  # Save results to csv
+    # for training_period in range(2, 50, 5):  # 10 loops
+    #     print("time taken: ", time.time() - starttime)
+    #     print("Training period: " + str(training_period))
+    #     print(
+    #         "Training period loop number: "
+    #         + str(((training_period - 2) / 5) + 1)
+    #         + "/10"
+    #     )
+    #     for offset in range(-10, 11, 10):  # 3 loops
+    #         print("time taken: ", time.time() - starttime)
+    #         print("threshold offset: " + str(offset))
+    #         print("total runs: " + str(totalruns) + "/" + str(totalnumofruns))
+    #         for rolling_average in [2, 3, 5, 10]:  # 4 loops
+    #             print("time taken: ", time.time() - starttime)
+    #             if rolling_average < training_period:
+    #                 print("rolling average: " + str(rolling_average))
+    #                 totalruns += 1
+    #                 list_of_stocks_proccessed = (
+    #                     rsi_stochastic.preprocess_data(  # 10 stocks (all 10 at once)
+    #                         list_of_stocks, v1=training_period
+    #                     )
+    #                 )  # Preprocess the data
+    #                 results = tester.test_array(
+    #                     list_of_stocks_proccessed,
+    #                     rsi_stochastic.logic,
+    #                     chart=False,
+    #                     v1=training_period,
+    #                     v2=80 - offset,  # v2 = [90, 80, 70]
+    #                     v3=20 + offset,  # v3 = [10, 30, 30]
+    #                     v4=min(rolling_average, training_period),
+    #                 )  # Run the backtester
+    #             df = pd.DataFrame(list(results))  # Create dataframe of results
+    #             df.columns = [
+    #                 "Buy and Hold",
+    #                 "Strategy",
+    #                 "Longs",
+    #                 "Sells",
+    #                 "Shorts",
+    #                 "Covers",
+    #                 "Trades",
+    #                 "Stdev_Strategy",
+    #                 "Stdev_Hold",
+    #                 "Stock",
+    #                 "v1",
+    #                 "v2",
+    #                 "v3",
+    #                 "v4",
+    #                 "v5",
+    #             ]
+    #             if training_period == 2 and offset == -10 and rolling_average == 2:
+    #                 df.to_csv(
+    #                     "results/Test_Results_RSI_Stochastic.csv",
+    #                     mode="a",
+    #                     header=True,
+    #                     index=False,
+    #                 )
+    #             else:
+    #                 df.to_csv(
+    #                     "results/Test_Results_RSI_Stochastic.csv",
+    #                     mode="a",
+    #                     header=True,
+    #                     index=False,
+    #                 )  # Save results to csv
+    # for training_period in range(2, 50, 5):  # 10 loops
+    #     print("time taken: ", time.time() - starttime)
+    #     print("Training period: " + str(training_period))
+    #     print(
+    #         "Training period loop number: "
+    #         + str(((training_period - 2) / 5) + 1)
+    #         + "/10"
+    #     )
+    #     for standard_deviation in range(1, 3):  # 5 loops
+    #         print("time taken: ", time.time() - starttime)
+    #         print("Standard deviation: " + str(standard_deviation) + "/3")
+    #         for offset in range(-10, 11, 10):  # 3 loops
+    #             print("time taken: ", time.time() - starttime)
+    #             print("threshold offset: " + str(offset))
+    #             for stop_loss in [0.05, 0.10, 0.15, 0.20]:  # 4 loops
+    #                 print("time taken: ", time.time() - starttime)
+    #                 if rolling_average < training_period:
+    #                     print("rolling average: " + str(rolling_average))
+    #                     print(
+    #                         "total runs: " + str(totalruns) + "/" + str(totalnumofruns)
+    #                     )
+    #                     totalruns += 1
+    #                     list_of_stocks_proccessed = bb_rsi_stop_loss.preprocess_data(  # 10 stocks (all 10 at once)
+    #                         list_of_stocks, v1=training_period
+    #                     )  # Preprocess the data
+    #                     results = tester.test_array(
+    #                         list_of_stocks_proccessed,
+    #                         bb_rsi_stop_loss.logic,
+    #                         chart=False,
+    #                         v1=training_period,
+    #                         v2=standard_deviation,
+    #                         v3=80 - offset,  # v2 = [90, 80, 70]
+    #                         v4=20 + offset,  # v3 = [10, 30, 30]
+    #                         v5=min(rolling_average, training_period),
+    #                     )  # Run the backtester
+    #                 df = pd.DataFrame(list(results))  # Create dataframe of results
+    #                 df.columns = [
+    #                     "Buy and Hold",
+    #                     "Strategy",
+    #                     "Longs",
+    #                     "Sells",
+    #                     "Shorts",
+    #                     "Covers",
+    #                     "Trades",
+    #                     "Stdev_Strategy",
+    #                     "Stdev_Hold",
+    #                     "Stock",
+    #                     "v1",
+    #                     "v2",
+    #                     "v3",
+    #                     "v4",
+    #                     "v5",
+    #                 ]
+    #                 if (
+    #                     training_period == 2
+    #                     and offset == -10
+    #                     and standard_deviation == 1
+    #                     and stop_loss == 0.05
+    #                 ):
+    #                     df.to_csv(
+    #                         "results/Test_Results_BB_RSI_Stop_Loss.csv",
+    #                         mode="a",
+    #                         header=True,
+    #                         index=False,
+    #                     )
+    #                 else:
+    #                     df.to_csv(
+    #                         "results/Test_Results_BB_RSI_stop_loss.csv",
+    #                         mode="a",
+    #                         header=True,
+    #                         index=False,
+    #                     )  # Save results to csv
 
 
 """ 
