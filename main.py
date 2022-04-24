@@ -2,7 +2,7 @@ import pandas as pd
 
 # local imports
 from backtester import tester
-from logic_functions.stochastic import logic
+from logic_functions.rsi_ibs import logic
 
 # Bollinger
 standard_deviations = (
@@ -45,7 +45,7 @@ def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None, v5=None)
         df["BOLD"] = (
             df["MA-TP"] - standard_deviations * df["std"]
         )  # Calculate Lower Bollinger Band
-        df.to_csv("data/" + stock + "_Processed.csv", index=False)  # Save to CSV
+        df.to_csv("data/" + stock + ".csv", index=False)  # Save to CSV
         list_of_stocks_processed.append(stock + "_Processed")
     return list_of_stocks_processed
 
