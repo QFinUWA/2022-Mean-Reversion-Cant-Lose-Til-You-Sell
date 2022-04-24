@@ -1,17 +1,11 @@
 # import main
 # Swap with importing main when example is defunct
-
-
 # from logic_functions.bollinger import preprocess_data, logic
-
 # from logic_functions.rsi import preprocess_data, logic
-
 # from logic_functions.rsi_ta import preprocess_data, logic
-
 # from logic_functions.bb_rsi import preprocess_data, logic
 # from logic_functions.bb_rsi_stoch_nick import preprocess_data, logic
-from logic_functions.ibs import preprocess_data, logic
-
+# from logic_functions.ibs import preprocess_data, logic
 from logic_functions.rsi_ibs import preprocess_data, logic
 
 from backtester import tester

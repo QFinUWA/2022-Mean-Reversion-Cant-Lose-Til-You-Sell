@@ -63,42 +63,35 @@ def logic(
         Output: none, but the account object will be modified on each call"""
 
     # RSI
-    OVERBOUGHT_THRESHOLD = 70
-    OVERSOLD_THRESHOLD = 30
+    OVERBOUGHT_THRESHOLD = 90
+    OVERSOLD_THRESHOLD = 10
     MAINTAIN_THRESHOLD_STAY = 40
 
     training_period = v1
     today = len(lookback) - 1
     position_type = ""
 
-    IBS_PERCENTILE = 0.5
+    IBS_PERCENTILE = 0.2
 
     if today < training_period:
         return
 
-    # check if long/short positions are above maintain threshold, to see if still "overbought above average"
+    # check if long/short positions are not within maintain threshold, and if so sell"
     for position in account.positions:
-        if position.type_ == "long" and (
+        if (position.type_ == "long" and (
             lookback["RSI"][today] > MAINTAIN_THRESHOLD_STAY
-            or lookback["IBS"][today] > IBS_PERCENTILE
+            or lookback["IBS"][today] > IBS_PERCENTILE)
         ):
             account.close_position(position, 1, lookback["close"][today])
 
-        elif position.type_ == "short" and (
+        elif (position.type_ == "short" and (
             lookback["RSI"][today] < 1 - MAINTAIN_THRESHOLD_STAY
-            or lookback["IBS"][today] < IBS_PERCENTILE
+            or lookback["IBS"][today] < 1 - IBS_PERCENTILE)
         ):
             account.close_position(position, 1, lookback["close"][today])
-
-    # Do nothing if RSI is in between the range
-    if (
-        lookback["RSI"][today] >= OVERSOLD_THRESHOLD
-        and lookback["RSI"][today] <= OVERBOUGHT_THRESHOLD
-    ):
-        return
 
     # Set a long position if stock is oversold
-    elif (
+    if (
         lookback["RSI"][today] < OVERSOLD_THRESHOLD
         and lookback["IBS"][today] <= IBS_PERCENTILE
     ):
@@ -107,7 +100,7 @@ def logic(
     # Set a short position if stock is overbought
     elif (
         lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
-        and lookback["IBS"][today] >= IBS_PERCENTILE
+        and lookback["IBS"][today] >= 1 - IBS_PERCENTILE
     ):
         position_type = "short"
 
