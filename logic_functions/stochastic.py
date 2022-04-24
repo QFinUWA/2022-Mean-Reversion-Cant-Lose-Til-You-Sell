@@ -54,7 +54,7 @@ def logic(
     if d_stochastic_indicator == k_stochastic_indicator:
 
         # Enter a long position if k% indicator is below lower bound
-        if k_stochastic_indicator <= v3:
+        if n_day_k_stochastic[-2] < v3 and n_day_k_stochastic[-1] > v3:
             for position in account.positions:  # Close all current positions
                 account.close_position(position, 1, lookback["close"][today])
             if account.buying_power > 0:
@@ -63,7 +63,7 @@ def logic(
                 )  # Enter a long position
 
         # Enter a short position if k% indicator is above upper bound
-        elif k_stochastic_indicator >= v4:
+        elif n_day_k_stochastic[-2] > v4 and k_stochastic_indicator < v4:
             for position in account.positions:  # Close all current positions
                 account.close_position(position, 1, lookback["close"][today])
             if account.buying_power > 0:
