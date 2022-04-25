@@ -1,55 +1,18 @@
 import pandas as pd
-# import time
-# import multiprocessing as mp
 
 # local imports
-from backtester import tester  # , engine
-# from backtester import API_Interface as api
+from backtester import tester
+from logic_functions.rsi_ibs import logic
 
-training_period = 20  # How far the rolling average takes into calculation
+# Bollinger
 standard_deviations = (
     3.5  # Number of Standard Deviations from the mean the Bollinger Bands sit
 )
 
-"""
-logic() function:
-    Context: Called for every row in the input data.
-
-    Input:  account - the account object
-            lookback - the lookback dataframe, containing all data up until this point in time
-
-    Output: none, but the account object will be modified on each call
-"""
-
-
-def logic(
-    account, lookback
-):  # Logic function to be used for each time interval in backtest
-
-    today = len(lookback) - 1
-    if (
-        today > training_period
-    ):  # If the lookback is long enough to calculate the Bollinger Bands
-
-        if (
-            lookback["close"][today] < lookback["BOLD"][today]
-        ):  # If current price is below lower Bollinger Band, enter a long position
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "long", account.buying_power, lookback["close"][today]
-                )  # Enter a long position
-
-        if (
-            lookback["close"][today] > lookback["BOLU"][today]
-        ):  # If today's price is above the upper Bollinger Band, enter a short position
-            for position in account.positions:  # Close all current positions
-                account.close_position(position, 1, lookback["close"][today])
-            if account.buying_power > 0:
-                account.enter_position(
-                    "short", account.buying_power, lookback["close"][today]
-                )  # Enter a short position
+# Stochasic
+rolling_average = 3  # D% rolling average
+lower_bound = 20  # Lower bound of stochastic indicator
+upper_bound = 80  # upper bound of stochastic indicator
 
 
 """
@@ -63,7 +26,9 @@ preprocess_data() function:
 """
 
 
-def preprocess_data(list_of_stocks):
+def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None, v5=None):
+    training_period = v1  # How far the rolling average takes into calculation
+    standard_deviations = v2
     list_of_stocks_processed = []
     for stock in list_of_stocks:
         df = pd.read_csv("data/" + stock + ".csv", parse_dates=[0])
@@ -80,7 +45,7 @@ def preprocess_data(list_of_stocks):
         df["BOLD"] = (
             df["MA-TP"] - standard_deviations * df["std"]
         )  # Calculate Lower Bollinger Band
-        df.to_csv("data/" + stock + "_Processed.csv", index=False)  # Save to CSV
+        df.to_csv("data/" + stock + ".csv", index=False)  # Save to CSV
         list_of_stocks_processed.append(stock + "_Processed")
     return list_of_stocks_processed
 
@@ -88,28 +53,44 @@ def preprocess_data(list_of_stocks):
 if __name__ == "__main__":
     # list_of_stocks = ["TSLA_2020-03-01_2022-01-20_1min"]
     list_of_stocks = [
-        "TSLA_2020-03-09_2022-01-28_15min",
-        "AAPL_2020-03-24_2022-02-12_15min",
+        "PEP_2020-04-18_2022-03-09_1min",
+        "NVDA_2020-04-18_2022-03-09_1min",
+        "JPM_2020-04-18_2022-03-09_1min",
+        "GOOG_2020-04-18_2022-03-09_1min",
+        "AMZN_2020-04-18_2022-03-09_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
-    list_of_stocks_proccessed = preprocess_data(list_of_stocks)  # Preprocess the data
-    results = tester.test_array(
-        list_of_stocks_proccessed, logic, chart=True
-    )  # Run backtest on list of stocks using the logic function
 
-    print("training period " + str(training_period))
-    print("standard deviations " + str(standard_deviations))
-    df = pd.DataFrame(
-        list(results),
-        columns=[
-            "Buy and Hold",
-            "Strategy",
-            "Longs",
-            "Sells",
-            "Shorts",
-            "Covers",
-            "Stdev_Strategy",
-            "Stdev_Hold",
-            "Stock",
-        ],
-    )  # Create dataframe of results
-    df.to_csv("results/Test_Results.csv", index=False)  # Save results to csv
+    # loop over v1 and test for each
+    for training_period in range(
+        5, 52, 2
+    ):  # Test training periods from 2 to 50 in steps of 2
+
+        # print(f"training period {training_period}")
+        # print("standard deviations " + str(rolling_average))
+
+        print(f"training period {training_period}")
+        print(f"rolling average {rolling_average}")
+        print(f"lower bound {lower_bound}")
+        print(f"upper bound: {upper_bound}")
+
+        list_of_stocks_proccessed = preprocess_data(
+            list_of_stocks,
+            v1=training_period,
+            v2=rolling_average,
+            v3=lower_bound,
+            v4=upper_bound,
+        )  # Preprocess the data
+
+        results = tester.test_array(
+            list_of_stocks_proccessed,
+            logic,
+            chart=True,
+            v1=training_period,
+            v2=rolling_average,
+            v3=lower_bound,
+            v4=upper_bound,
+        )
+        df = pd.DataFrame(list(results))  # Create dataframe of results
+        df.to_csv(
+            "results/Test_Results.csv", mode="a", header=False, index=False
+        )  # Save results to csv
