@@ -78,29 +78,29 @@ def logic(
 
     # check if long/short positions are not within maintain threshold, and if so sell"
     for position in account.positions:
-        if (position.type_ == "long" and (
+        if position.type_ == "long" and (
             lookback["RSI"][today] > MAINTAIN_THRESHOLD_STAY
-            or lookback["IBS"][today] > IBS_PERCENTILE)
+            #or lookback["IBS"][today] > IBS_PERCENTILE
         ):
             account.close_position(position, 1, lookback["close"][today])
 
-        elif (position.type_ == "short" and (
+        elif position.type_ == "short" and (
             lookback["RSI"][today] < 1 - MAINTAIN_THRESHOLD_STAY
-            or lookback["IBS"][today] < 1 - IBS_PERCENTILE)
+            #or lookback["IBS"][today] < 1 - IBS_PERCENTILE
         ):
             account.close_position(position, 1, lookback["close"][today])
 
     # Set a long position if stock is oversold
     if (
         lookback["RSI"][today] < OVERSOLD_THRESHOLD
-        and lookback["IBS"][today] <= IBS_PERCENTILE
+        #and lookback["IBS"][today] <= IBS_PERCENTILE
     ):
         position_type = "long"
 
     # Set a short position if stock is overbought
     elif (
         lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
-        and lookback["IBS"][today] >= 1 - IBS_PERCENTILE
+        #and lookback["IBS"][today] >= 1 - IBS_PERCENTILE
     ):
         position_type = "short"
 
