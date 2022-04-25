@@ -2,7 +2,7 @@ import pandas as pd
 
 # local imports
 from backtester import tester
-from logic_functions.rsi_ibs import logic
+from logic_functions.stochastic import logic
 
 # Bollinger
 standard_deviations = (
