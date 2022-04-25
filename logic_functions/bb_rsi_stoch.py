@@ -102,7 +102,8 @@ def logic(
     # Hidden divergences signal a possible trend continuation.
     if (
         (
-            lookback["%K_RSI"][today] < OVERSOLD_THRESHOLD
+            lookback["%K_RSI"][today] >= OVERSOLD_THRESHOLD
+            and lookback["%K_RSI"][today - 1] < OVERSOLD_THRESHOLD
             or lookback["close"][today] < lookback["BB_LO"][today]
         )
         and account.prev_bb_low != NA
@@ -124,7 +125,8 @@ def logic(
 
     elif (
         (
-            lookback["%K_RSI"][today] > OVERBOUGHT_THRESHOLD
+            lookback["%K_RSI"][today] <= OVERBOUGHT_THRESHOLD
+            and lookback["%K_RSI"][today - 1] > OVERBOUGHT_THRESHOLD
             or lookback["close"][today] > lookback["BB_UP"][today]
         )
         and account.prev_bb_high != NA

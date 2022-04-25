@@ -2,7 +2,7 @@ import pandas as pd
 
 # local imports
 from backtester import tester
-from logic_functions.rsi_ibs import logic
+from logic_functions.stochastic import logic
 
 # Bollinger
 standard_deviations = (
@@ -11,8 +11,8 @@ standard_deviations = (
 
 # Stochasic
 rolling_average = 3  # D% rolling average
-lower_bound = 30  # Lower bound of stochastic indicator
-upper_bound = 70  # upper bound of stochastic indicator
+lower_bound = 20  # Lower bound of stochastic indicator
+upper_bound = 80  # upper bound of stochastic indicator
 
 
 """
@@ -53,8 +53,11 @@ def preprocess_data(list_of_stocks, v1=None, v2=None, v3=None, v4=None, v5=None)
 if __name__ == "__main__":
     # list_of_stocks = ["TSLA_2020-03-01_2022-01-20_1min"]
     list_of_stocks = [
-        "TSLA_2020-03-09_2022-01-28_15min",
-        "AAPL_2020-03-24_2022-02-12_1min",
+        "PEP_2020-04-18_2022-03-09_1min",
+        "NVDA_2020-04-18_2022-03-09_1min",
+        "JPM_2020-04-18_2022-03-09_1min",
+        "GOOG_2020-04-18_2022-03-09_1min",
+        "AMZN_2020-04-18_2022-03-09_1min",
     ]  # List of stock data csv's to be tested, located in "data/" folder
 
     # loop over v1 and test for each
@@ -81,7 +84,7 @@ if __name__ == "__main__":
         results = tester.test_array(
             list_of_stocks_proccessed,
             logic,
-            chart=False,
+            chart=True,
             v1=training_period,
             v2=rolling_average,
             v3=lower_bound,
