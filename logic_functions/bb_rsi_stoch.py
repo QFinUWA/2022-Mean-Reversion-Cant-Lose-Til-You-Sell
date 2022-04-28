@@ -50,8 +50,8 @@ def preprocess_data(
             100 * (df["RSI"] - df["N_LOW_RSI"]) / (df["N_HIGH_RSI"] - df["N_LOW_RSI"])
         )
 
-        # Use the %k to calculate a simple moving average over the past <d_period> values of %k
-        df["%D_RSI"] = df["%K_RSI"].rolling(d_period).mean()
+        # # Use the %k to calculate a simple moving average over the past <d_period> values of %k
+        # df["%D_RSI"] = df["%K_RSI"].rolling(d_period).mean()
 
         # Calculate the standard deviation
         df["STD"] = df["close"].rolling(rsi_period).std()
@@ -86,9 +86,10 @@ def logic(
                 lookback - the lookback dataframe, containing all data up until this point in time
 
         Output: none, but the account object will be modified on each call"""
+    offset = v2
 
-    OVERBOUGHT_THRESHOLD = 80
-    OVERSOLD_THRESHOLD = 20
+    OVERBOUGHT_THRESHOLD = 80 - offset
+    OVERSOLD_THRESHOLD = 20 + offset
     NA = -9999999
 
     training_period = v1
@@ -104,7 +105,8 @@ def logic(
         (
             lookback["%K_RSI"][today] >= OVERSOLD_THRESHOLD
             and lookback["%K_RSI"][today - 1] < OVERSOLD_THRESHOLD
-            or lookback["close"][today] < lookback["BB_LO"][today]
+            # or lookback["close"][today] < lookback["BB_LO"][today]
+            # and lookback["close"][today] < lookback["BB_LO"][today]
         )
         and account.prev_bb_low != NA
         and account.prev_rsi_low != NA
@@ -123,28 +125,30 @@ def logic(
         ):
             close_and_enter("long", account, lookback, today, close=False)
 
-    elif (
-        (
-            lookback["%K_RSI"][today] <= OVERBOUGHT_THRESHOLD
-            and lookback["%K_RSI"][today - 1] > OVERBOUGHT_THRESHOLD
-            or lookback["close"][today] > lookback["BB_UP"][today]
-        )
-        and account.prev_bb_high != NA
-        and account.prev_rsi_high != NA
-    ):
-        # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
-        if (
-            lookback["close"][today] > account.prev_bb_high
-            and lookback["%K_RSI"][today] < account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today)
+    # elif (
+    #     (
+    #         lookback["%K_RSI"][today] <= OVERBOUGHT_THRESHOLD
+    #         and lookback["%K_RSI"][today - 1] > OVERBOUGHT_THRESHOLD
+    #         # or lookback["close"][today] > lookback["BB_UP"][today]
+    #         # print("%K_RSI: ", lookback["%K_RSI"][today])
+    #         # and lookback["close"][today] > lookback["BB_UP"][today]
+    #     )
+    #     and account.prev_bb_high != NA
+    #     and account.prev_rsi_high != NA
+    # ):
+    #     # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
+    #     if (
+    #         lookback["close"][today] > account.prev_bb_high
+    #         and lookback["%K_RSI"][today] < account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today)
 
-        # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short, do not cover
-        elif (
-            lookback["close"][today] < account.prev_bb_high
-            and lookback["%K_RSI"][today] > account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today, close=False)
+    #     # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short, do not cover
+    #     elif (
+    #         lookback["close"][today] < account.prev_bb_high
+    #         and lookback["%K_RSI"][today] > account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today, close=False)
 
     # Record the lows if the low variables are not available
     elif (
