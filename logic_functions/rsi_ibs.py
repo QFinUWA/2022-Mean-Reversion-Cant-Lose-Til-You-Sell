@@ -48,9 +48,9 @@ def logic(
     account: Account,
     lookback: pd.DataFrame,
     v1: int,
-    v2=None,
-    v3=None,
-    v4=None,
+    v2: int,
+    v3: int,
+    v4: int,
     v5=None,
 ) -> None:
     """
@@ -62,50 +62,57 @@ def logic(
 
         Output: none, but the account object will be modified on each call"""
 
-    # RSI
-    OVERBOUGHT_THRESHOLD = 90
-    OVERSOLD_THRESHOLD = 10
-    MAINTAIN_THRESHOLD_STAY = 40
-
     training_period = v1
     today = len(lookback) - 1
     position_type = ""
 
-    IBS_PERCENTILE = 0.2
+    # RSI
+    BUYING_THRESHOLD = v2
+    MAINTAIN_THRESHOLD_STAY = v3
+
+    IBS_PERCENTILE = v4
 
     if today < training_period:
         return
 
     # check if long/short positions are not within maintain threshold, and if so sell"
+
     for position in account.positions:
+        #account.close_position(position, 1, lookback["close"][today])
+        
         if position.type_ == "long" and (
             lookback["RSI"][today] > MAINTAIN_THRESHOLD_STAY
-            #or lookback["IBS"][today] > IBS_PERCENTILE
+            or lookback["IBS"][today] > IBS_PERCENTILE
         ):
             account.close_position(position, 1, lookback["close"][today])
 
         elif position.type_ == "short" and (
             lookback["RSI"][today] < 1 - MAINTAIN_THRESHOLD_STAY
-            #or lookback["IBS"][today] < 1 - IBS_PERCENTILE
+            or lookback["IBS"][today] < 1 - IBS_PERCENTILE
         ):
             account.close_position(position, 1, lookback["close"][today])
 
     # Set a long position if stock is oversold
     if (
-        lookback["RSI"][today] < OVERSOLD_THRESHOLD
-        #and lookback["IBS"][today] <= IBS_PERCENTILE
+        lookback["RSI"][today] < BUYING_THRESHOLD
+        and lookback["IBS"][today] <= IBS_PERCENTILE
     ):
         position_type = "long"
 
+    else:
+        return
+
+    '''
     # Set a short position if stock is overbought
     elif (
-        lookback["RSI"][today] > OVERBOUGHT_THRESHOLD
-        #and lookback["IBS"][today] >= 1 - IBS_PERCENTILE
+        lookback["RSI"][today] > 100 - BUYING_THRESHOLD
+        and lookback["IBS"][today] >= 1 - IBS_PERCENTILE
     ):
         position_type = "short"
 
     else:
         return
+    '''
 
     # Enter the position if buying power is more than 0
     if account.buying_power > 0:
