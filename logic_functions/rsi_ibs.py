@@ -103,7 +103,7 @@ def logic(
         and lookback["IBS"][today] <= IBS_PERCENTILE
     ):
         position_type = "long"
-    
+
     # Set a short position if stock is overbought
     elif (
         lookback["RSI"][today] > OVERBOUGHT_THRESHOLD

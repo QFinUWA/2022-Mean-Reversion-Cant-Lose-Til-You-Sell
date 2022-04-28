@@ -105,7 +105,7 @@ def logic(
         (
             lookback["%K_RSI"][today] >= OVERSOLD_THRESHOLD
             and lookback["%K_RSI"][today - 1] < OVERSOLD_THRESHOLD
-            or lookback["close"][today] < lookback["BB_LO"][today]
+            # or lookback["close"][today] < lookback["BB_LO"][today]
             # and lookback["close"][today] < lookback["BB_LO"][today]
         )
         and account.prev_bb_low != NA
@@ -125,30 +125,30 @@ def logic(
         ):
             close_and_enter("long", account, lookback, today, close=False)
 
-    elif (
-        (
-            lookback["%K_RSI"][today] <= OVERBOUGHT_THRESHOLD
-            and lookback["%K_RSI"][today - 1] > OVERBOUGHT_THRESHOLD
-            or lookback["close"][today] > lookback["BB_UP"][today]
-            # print("%K_RSI: ", lookback["%K_RSI"][today])
-            # and lookback["close"][today] > lookback["BB_UP"][today]
-        )
-        and account.prev_bb_high != NA
-        and account.prev_rsi_high != NA
-    ):
-        # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
-        if (
-            lookback["close"][today] > account.prev_bb_high
-            and lookback["%K_RSI"][today] < account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today)
+    # elif (
+    #     (
+    #         lookback["%K_RSI"][today] <= OVERBOUGHT_THRESHOLD
+    #         and lookback["%K_RSI"][today - 1] > OVERBOUGHT_THRESHOLD
+    #         # or lookback["close"][today] > lookback["BB_UP"][today]
+    #         # print("%K_RSI: ", lookback["%K_RSI"][today])
+    #         # and lookback["close"][today] > lookback["BB_UP"][today]
+    #     )
+    #     and account.prev_bb_high != NA
+    #     and account.prev_rsi_high != NA
+    # ):
+    #     # Regular Bearish: Higher high price, Lower high oscillator, uptrend to downtrend, short
+    #     if (
+    #         lookback["close"][today] > account.prev_bb_high
+    #         and lookback["%K_RSI"][today] < account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today)
 
-        # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short, do not cover
-        elif (
-            lookback["close"][today] < account.prev_bb_high
-            and lookback["%K_RSI"][today] > account.prev_rsi_high
-        ):
-            close_and_enter("short", account, lookback, today, close=False)
+    #     # Hidden Bearish: Lower high price, Higher high oscillator, Sell the rallies, short, do not cover
+    #     elif (
+    #         lookback["close"][today] < account.prev_bb_high
+    #         and lookback["%K_RSI"][today] > account.prev_rsi_high
+    #     ):
+    #         close_and_enter("short", account, lookback, today, close=False)
 
     # Record the lows if the low variables are not available
     elif (
